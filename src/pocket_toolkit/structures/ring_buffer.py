@@ -1,12 +1,9 @@
 """Реализация кольцевого буфера фиксированного размера."""
 
 from collections.abc import Iterator
-from typing import Generic, TypeVar
-
-T = TypeVar("T")
 
 
-class RingBuffer(Generic[T]):
+class RingBuffer[T]:
     """Кольцевой буфер (циклический буфер) с фиксированной максимальной вместимостью.
 
     При переполнении буфера добавление новых элементов приводит к перезаписи
