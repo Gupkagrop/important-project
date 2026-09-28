@@ -63,80 +63,6 @@ ROADMAP.md
 <files>
 This section contains the contents of the repository's files.
 
-<file path="AGENTS.md">
-> [!NOTE]
-> Данный файл определяет архитектурный контракт, правила оформления кода, стандарты коммитов и регламент ежедневного инкрементального развития библиотеки `pocket-toolkit`. Все агенты обязаны следовать инструкциям при добавлении новых компонентов.
-
-# Pocket Toolkit — Operational Contract & Guidelines
-
-## 1. Project Overview
-`pocket-toolkit` is a modular, zero-dependency Python utility and data structure library built for modern Python (>=3.12).
-The project evolves through daily, bite-sized, atomic feature increments tracked in [ROADMAP.md](file:///c:/Users/denis/Documents/antigravity/GitHub%20Activity/ROADMAP.md).
-
-## 2. Tech Stack & Environment
-- **Runtime:** Python >= 3.12
-- **Package Manager:** `uv`
-- **Testing:** `pytest`
-- **Git Remote:** `Gupkagrop` (`https://github.com/Gupkagrop/important-project.git`)
-- **Main Branch:** `main`
-
-## 3. Code Standards & Architecture
-- **Language & Comments:** All code symbols (classes, functions, variables, files) must be in English. All docstrings, inline comments, and annotations MUST be in Russian.
-- **Strict Typing:** Every function signature and class attribute must include explicit type hints (`typing.Any` is strictly prohibited). Use generics (`TypeVar`, `Generic`) where appropriate.
-- **Complexity & Flat Flow:** Adhere to early returns (maximum 3 levels of nesting).
-- **Single Responsibility:** Functions must stay within 30-40 lines; break down complex logic into private helper functions (`_helper_func`).
-- **Zero Placeholders:** Never commit mocks, placeholders, or unfinished `TODO` markers. Every added component must be 100% production-ready.
-
-## 4. Daily Increment Workflow (Automation Protocol)
-On each automated daily run:
-1. Open [ROADMAP.md](file:///c:/Users/denis/Documents/antigravity/GitHub%20Activity/ROADMAP.md) and pick the next uncompleted task `[ ]`.
-2. Implement the designated module inside `src/pocket_toolkit/<category>/<module_name>.py`.
-3. Export public symbols in `src/pocket_toolkit/__init__.py` and the respective subpackage `__init__.py`.
-4. Create comprehensive unit tests in `tests/test_<module_name>.py` covering standard cases, edge cases, and error handling.
-5. Run test suite: `uv run pytest`.
-6. Mark the task as done `[x]` in `ROADMAP.md`.
-7. Commit changes strictly in Russian using Conventional Commits format:
-   - Example: `feat(structures): реализовать кольцевой буфер и модульные тесты`
-8. Push commits to GitHub: `git push Gupkagrop main`.
-</file>
-
-<file path=".github/workflows/ci.yml">
-name: CI
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.12", "3.13"]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-        with:
-          enable-cache: true
-
-      - name: Set up Python ${{ matrix.python-version }}
-        run: uv python install ${{ matrix.python-version }}
-
-      - name: Install dependencies
-        run: uv sync --all-extras --dev
-
-      - name: Run static analysis with ruff
-        run: uv run ruff check
-
-      - name: Run tests with pytest
-        run: uv run pytest
-</file>
-
 <file path="src/pocket_toolkit/structures/__init__.py">
 """Модуль структур данных библиотеки pocket-toolkit."""
 
@@ -145,129 +71,6 @@ from pocket_toolkit.structures.ring_buffer import RingBuffer
 __all__: list[str] = [
     "RingBuffer",
 ]
-</file>
-
-<file path="src/pocket_toolkit/structures/ring_buffer.py">
-"""Реализация кольцевого буфера фиксированного размера."""
-
-from collections.abc import Iterator
-
-
-class RingBuffer[T]:
-    """Кольцевой буфер (циклический буфер) с фиксированной максимальной вместимостью.
-
-    При переполнении буфера добавление новых элементов приводит к перезаписи
-    наиболее старых элементов без выделения дополнительной памяти.
-    """
-
-    def __init__(self, capacity: int) -> None:
-        """Инициализирует буфер заданной вместимости.
-
-        :param capacity: Максимальное количество элементов (должно быть строго > 0).
-        :raises ValueError: Если вместимость меньше либо равна нулю.
-        """
-        if capacity <= 0:
-            raise ValueError("Вместимость кольцевого буфера должна быть больше 0")
-
-        self._capacity: int = capacity
-        self._data: list[T | None] = [None] * capacity
-        self._head: int = 0
-        self._size: int = 0
-
-    @property
-    def capacity(self) -> int:
-        """Возвращает максимальную вместимость буфера."""
-        return self._capacity
-
-    def is_empty(self) -> bool:
-        """Проверяет, пуст ли буфер."""
-        return self._size == 0
-
-    def is_full(self) -> bool:
-        """Проверяет, заполнен ли буфер до предела."""
-        return self._size == self._capacity
-
-    def append(self, item: T) -> None:
-        """Добавляет элемент в конец буфера.
-
-        Если буфер полон, перезаписывает самый старый элемент и сдвигает указатель головы.
-        """
-        if self.is_full():
-            self._data[self._head] = item
-            self._head = (self._head + 1) % self._capacity
-            return
-
-        tail_index: int = (self._head + self._size) % self._capacity
-        self._data[tail_index] = item
-        self._size += 1
-
-    def popleft(self) -> T:
-        """Извлекает и возвращает самый старый элемент из начала буфера.
-
-        :raises IndexError: Если буфер пуст.
-        """
-        if self.is_empty():
-            raise IndexError("Невозможно извлечь элемент: буфер пуст")
-
-        item: T | None = self._data[self._head]
-        self._data[self._head] = None
-        self._head = (self._head + 1) % self._capacity
-        self._size -= 1
-
-        # Гарантируем корректность типа после проверки непустого состояния
-        assert item is not None
-        return item
-
-    def peek(self) -> T:
-        """Возвращает самый старый элемент без его удаления.
-
-        :raises IndexError: Если буфер пуст.
-        """
-        if self.is_empty():
-            raise IndexError("Буфер пуст")
-
-        item: T | None = self._data[self._head]
-        assert item is not None
-        return item
-
-    def clear(self) -> None:
-        """Сбрасывает состояние буфера, очищая все элементы."""
-        self._data = [None] * self._capacity
-        self._head = 0
-        self._size = 0
-
-    def to_list(self) -> list[T]:
-        """Возвращает текущие элементы буфера в виде списка от старых к новым."""
-        return list(self)
-
-    def __len__(self) -> int:
-        """Возвращает текущее количество элементов в буфере."""
-        return self._size
-
-    def __iter__(self) -> Iterator[T]:
-        """Итерирует по элементам буфера в хронологическом порядке."""
-        for offset in range(self._size):
-            actual_index: int = (self._head + offset) % self._capacity
-            item: T | None = self._data[actual_index]
-            assert item is not None
-            yield item
-
-    def __getitem__(self, index: int) -> T:
-        """Возвращает элемент по логическому индексу от 0 до size - 1.
-
-        :raises IndexError: При выходе индекса за границы диапазона.
-        """
-        if index < 0 or index >= self._size:
-            raise IndexError("Индекс выходит за границы диапазона элементов буфера")
-
-        actual_index: int = (self._head + index) % self._capacity
-        item: T | None = self._data[actual_index]
-        assert item is not None
-        return item
-
-    def __repr__(self) -> str:
-        """Строковое представление состояния буфера."""
-        return f"RingBuffer(size={self._size}, capacity={self._capacity}, items={self.to_list()})"
 </file>
 
 <file path="src/pocket_toolkit/__init__.py">
@@ -434,6 +237,289 @@ dist/
 3.14
 </file>
 
+<file path="AGENTS.md">
+> [!NOTE]
+> Данный файл определяет архитектурный контракт, правила оформления кода, стандарты коммитов и регламент ежедневного инкрементального развития библиотеки `pocket-toolkit`. Все агенты обязаны следовать инструкциям при добавлении новых компонентов.
+
+# Pocket Toolkit — Operational Contract & Guidelines
+
+## 1. Project Overview
+`pocket-toolkit` is a modular, zero-dependency Python utility and data structure library built for modern Python (>=3.12).
+The project evolves through daily, bite-sized, atomic feature increments tracked in [ROADMAP.md](file:///c:/Users/denis/Documents/antigravity/GitHub%20Activity/ROADMAP.md).
+
+## 2. Tech Stack & Environment
+- **Runtime:** Python >= 3.12
+- **Package Manager:** `uv`
+- **Testing:** `pytest`
+- **Git Remote:** `Gupkagrop` (`https://github.com/Gupkagrop/important-project.git`)
+- **Main Branch:** `main`
+
+## 3. Code Standards & Architecture
+- **Language & Comments:** All code symbols (classes, functions, variables, files) must be in English. All docstrings, inline comments, and annotations MUST be in Russian.
+- **Strict Typing:** Every function signature and class attribute must include explicit type hints (`typing.Any` is strictly prohibited). Use generics (`TypeVar`, `Generic`) where appropriate.
+- **Complexity & Flat Flow:** Adhere to early returns (maximum 3 levels of nesting).
+- **Single Responsibility:** Functions must stay within 30-40 lines; break down complex logic into private helper functions (`_helper_func`).
+- **Zero Placeholders:** Never commit mocks, placeholders, or unfinished `TODO` markers. Every added component must be 100% production-ready.
+
+## 4. Daily Increment Workflow (Automation Protocol)
+On each automated daily run:
+1. Open [ROADMAP.md](file:///c:/Users/denis/Documents/antigravity/GitHub%20Activity/ROADMAP.md) and pick the next uncompleted task `[ ]`.
+2. Implement the designated module inside `src/pocket_toolkit/<category>/<module_name>.py`.
+3. Export public symbols in `src/pocket_toolkit/__init__.py` and the respective subpackage `__init__.py`.
+4. Create comprehensive unit tests in `tests/test_<module_name>.py` covering standard cases, edge cases, and error handling.
+5. Run test suite: `uv run pytest`.
+6. Mark the task as done `[x]` in `ROADMAP.md`.
+7. Commit changes strictly in Russian using Conventional Commits format:
+   - Example: `feat(structures): реализовать кольцевой буфер и модульные тесты`
+8. Push commits to GitHub: `git push Gupkagrop main`.
+</file>
+
+<file path="ROADMAP.md">
+# Roadmap развития Pocket Toolkit (60 дней)
+
+План постепенного ежедневного расширения библиотеки `pocket-toolkit`. Каждый день агент реализует одну законченную изолированную задачу, сопровождает ее подробными комментариями и docstrings на русском языке, покрывает модульными тестами на 100% и отправляет коммит в удаленный репозиторий.
+
+---
+
+## Этап 1: Структуры данных (`structures`) — Дни 1–12
+- [x] **День 1: Ring Buffer (Кольцевой буфер)** — Фиксированный кольцевой буфер `RingBuffer[T]` с поддержкой перезаписи старых элементов, итерации и проверки вместимости.
+- [ ] **День 2: Singly Linked List (Односвязный список)** — Односвязный список `LinkedList[T]` с поддержкой вставки в начало/конец, удаления по значению и прямого обхода.
+- [ ] **День 3: Doubly Linked List (Двусвязный список)** — Двусвязный список `DoublyLinkedList[T]` с быстрым удалением узлов за `O(1)` и двусторонней итерацией.
+- [ ] **День 4: LRU Cache (Кэш вытеснения по давности)** — Класс `LRUCache[K, V]` с константным временем доступа `O(1)` на базе хэш-таблицы и двусвязного списка.
+- [ ] **День 5: LFU Cache (Кэш вытеснения по частоте)** — Класс `LFUCache[K, V]` с вытеснением наименее часто запрашиваемых ключей за `O(1)`.
+- [ ] **День 6: Prefix Tree / Trie (Префиксное дерево)** — Класс `Trie` для эффективного поиска по префиксу, проверки наличия слов и автодополнения.
+- [ ] **День 7: Radix Tree (Сжатое префиксное дерево)** — Оптимизированное дерево `RadixTree` со слиянием узлов с общими префиксами.
+- [ ] **День 8: Priority Queue (Очередь с приоритетами)** — Класс `PriorityQueue[T]` на базе бинарной кучи с поддержкой минимального/максимального приоритета.
+- [ ] **День 9: Disjoint Set / Union-Find** — Структура `DisjointSet` с эвристиками объединения по рангу и сжатия путей.
+- [ ] **День 10: Bounded Deque (Ограниченная двусторонняя очередь)** — Двусторонняя очередь `BoundedDeque[T]` с лимитом размера и безопасным выталкиванием.
+- [ ] **День 11: Bloom Filter (Вероятностный фильтр)** — Класс `BloomFilter` с независимыми хеш-функциями для быстрой проверки принадлежности множеству.
+- [ ] **День 12: Sparse Matrix (Разреженная матрица)** — Структура `SparseMatrix` на базе словаря координат для эффективного хранения нулевых матриц.
+
+---
+
+## Этап 2: Алгоритмы и вычисления (`algorithms`) — Дни 13–24
+- [ ] **День 13: Binary Search Variants** — Утилиты двоичного поиска в отсортированных последовательностях: `lower_bound`, `upper_bound`, `binary_search`.
+- [ ] **День 14: Levenshtein Distance & Similarity** — Вычисление расстояния Левенштейна и расчет коэффициента текстового сходства.
+- [ ] **День 15: Run-Length Encoding / Decoding** — Модуль легковесного сжатия и распаковки данных `rle_encode` и `rle_decode`.
+- [ ] **День 16: Topological Sort (Топологическая сортировка)** — Алгоритм Кана для разрешения зависимостей в направленном ациклическом графе (DAG).
+- [ ] **День 17: Interval Intersection & Merging** — Алгоритмы слияния перекрывающихся интервалов и нахождения общего пересечения отрезков.
+- [ ] **День 18: Sliding Window Aggregator** — Класс скользящего окна для расчета среднего, минимума и максимума за фиксированный интервал.
+- [ ] **День 19: Knuth-Morris-Pratt (KMP) Search** — Быстрый поиск вхождений подстроки в строке с построением префикс-функции (массива $\pi$).
+- [ ] **День 20: Simple Huffman Coding** — Построение дерева Хаффмана, кодирование и декодирование текстовых сообщений.
+- [ ] **День 21: Dijkstra Shortest Path** — Поиск кратчайшего пути между вершинами во взвешенном графе с неотрицательными весами.
+- [ ] **День 22: Fast Power & Modular Arithmetic** — Алгоритмы быстрого бинарного возведения в степень и нахождения обратного по модулю числа.
+- [ ] **День 23: CRC32 & FNV-1a Hashing** — Собственные легковесные функции расчета контрольных сумм CRC32 и некриптографического хеша FNV-1a.
+- [ ] **День 24: Reservoir Sampling & Fisher-Yates** — Алгоритм выборки $k$ случайных элементов из бесконечного потока и тасование массива за $O(n)$.
+
+---
+
+## Этап 3: Декораторы и функциональные утилиты (`decorators` & `functional`) — Дни 25–36
+- [ ] **День 25: Retry with Exponential Backoff** — Декоратор `@retry` с экспоненциальной задержкой, добавлением джиттера и фильтрацией исключений.
+- [ ] **День 26: Token Bucket Rate Limiter** — Декоратор ограничения частоты вызовов на основе алгоритма корзины токенов.
+- [ ] **День 27: Leaky Bucket Limiter** — Ограничитель трафика и вызовов по алгоритму «протекающего ведра» с фиксированной скоростью утечки.
+- [ ] **День 28: Timed Cache with TTL** — Декоратор мемоизации `@timed_cache` с временем жизни кэша и ограничением максимального размера.
+- [ ] **День 29: Circuit Breaker Pattern** — Защитный выключатель (`CircuitBreaker`) с состояниями CLOSED, OPEN, HALF_OPEN для сетевых вызовов.
+- [ ] **День 30: Debounce Decorator** — Декоратор подавления дребезга: откладывает выполнение функции до истечения паузы тишины.
+- [ ] **День 31: Throttle Decorator** — Декоратор пропуска вызовов: гарантирует вызов функции не чаще одного раза за заданный интервал.
+- [ ] **День 32: Pipe & Compose** — Функциональные утилиты для линейного конвейера обработки данных `pipe(val, f, g)` и композиции функций `compose(f, g)`.
+- [ ] **День 33: Lazy Property Wrapper** — Дескриптор `@lazy_property` для отложенного вычисления атрибута объекта при первом обращении.
+- [ ] **День 34: Function Currying** — Функция `curry` для преобразования функции нескольких аргументов в цепочку одноместных функций.
+- [ ] **День 35: Execution Timer & Profiler** — Декоратор `@profile_time` для логирования и сбора статистики времени выполнения функций.
+- [ ] **День 36: Deprecation & Contract Validator** — Декораторы `@deprecated` с выводом предупреждений и `@validate_types` для проверки сигнатур.
+
+---
+
+## Этап 4: Обработка данных и строки (`data` & `strings`) — Дни 37–48
+- [ ] **День 37: Text Slugify & Transliteration** — Генерация чистых URL-слагов с транслитерацией кириллицы в латиницу.
+- [ ] **День 38: String Case Converters** — Конвертер регистра строк: преобразование между `camelCase`, `snake_case`, `kebab-case`, `PascalCase`.
+- [ ] **День 39: JSON Flattener & Unflattener** — Преобразование глубоких вложенных структур в плоские словари вида `{"a.b.c": 1}` и обратно.
+- [ ] **День 40: Deep Dict Merge & Patch** — Рекурсивное слияние словарей и применение JSON-like дельта-патчей.
+- [ ] **День 41: Dict Difference & Delta Finder** — Утилита поиска добавленных, удаленных и измененных ключей между двумя структурами.
+- [ ] **День 42: Human-Readable Byte Formatter** — Форматирование размера данных в байтах (КБ, МБ, ГБ) с поддержкой стандартов SI и IEC.
+- [ ] **День 43: Time Duration Formatter** — Преобразование секунд и миллисекунд в компактный вид (например, `2ч 15м 30с`).
+- [ ] **День 44: Safe Math Expression Evaluator** — Безопасный парсер и калькулятор базовых арифметических выражений на базе AST без вызова `eval()`.
+- [ ] **День 45: SemVer (Semantic Versioning) Parser** — Класс `SemanticVersion` для парсинга, сравнения и валидации версий по спецификации SemVer 2.0.
+- [ ] **День 46: Simple Template Engine** — Легковесный шаблонизатор текста с подстановкой переменных `{{ var }}` и условными блоками `{% if %}`.
+- [ ] **День 47: URL Query String Parser & Builder** — Разбор и сборка query-параметров URL с корректным экранированием символов.
+- [ ] **День 48: Streaming CSV Parser & Generator** — Потоковый легковесный парсер и генератор CSV с поддержкой кавычек и экранирования.
+
+---
+
+## Этап 5: Системные, CLI и файловые утилиты (`cli` & `system`) — Дни 49–60
+- [ ] **День 49: ANSI Colorizer & Text Styler** — Модуль стилизации консольного текста (цвета текста, фоны, жирный, подчеркивание) с автоопределением TTY.
+- [ ] **День 50: CLI Table Formatter** — Форматирование и вывод двумерных данных в виде аккуратных ASCII/Unicode таблиц с автоподбором ширины колонок.
+- [ ] **День 51: Text Progress Bar** — Текстовый индикатор выполнения задач в консоли с отображением процентов, шкалы и оценки оставшегося времени.
+- [ ] **День 52: CLI Argument Parser** — Минималистичный и типобезопасный парсер позиционных аргументов и флагов командной строки.
+- [ ] **День 53: Env File & Configuration Parser** — Парсер `.env` файлов со строгим приведением типов к `int`, `float`, `bool`, `list`.
+- [ ] **День 54: Glob & Path Pattern Matcher** — Сопоставление путей файлов по шаблонам с поддержкой звездочек `*`, `**` и знака вопроса `?`.
+- [ ] **День 55: Temp File & Directory Contexts** — Контекстные менеджеры для создания гарантированно удаляемых временных файлов и папок.
+- [ ] **День 56: In-Memory File Buffer** — Виртуальный потоковый буфер данных с поддержкой позиционирования `seek`, чтения и поблочной записи.
+- [ ] **День 57: Atomic File Writer** — Утилита безопасной атомарной записи файлов через временный файл с последующим переименованием.
+- [ ] **День 58: Simple Structured Logger** — Легковесный логгер со структурированным выводом (JSON или текст) и цветовой дифференциацией уровней.
+- [ ] **День 59: Event Bus / Observer** — Потокобезопасная синхронная шина событий с подпиской, отпиской и фильтрацией по типу события.
+- [ ] **День 60: System Diagnostic Collector** — Сборщик системных метрик окружения (версия ОС, Python, память процесса, системное время) на стандартной библиотеке.
+</file>
+
+<file path=".github/workflows/ci.yml">
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Run static analysis with ruff
+        run: uv run ruff check
+
+      - name: Run tests with pytest
+        run: uv run pytest
+</file>
+
+<file path="src/pocket_toolkit/structures/ring_buffer.py">
+"""Реализация кольцевого буфера фиксированного размера."""
+
+from collections.abc import Iterator
+
+
+class RingBuffer[T]:
+    """Кольцевой буфер (циклический буфер) с фиксированной максимальной вместимостью.
+
+    При переполнении буфера добавление новых элементов приводит к перезаписи
+    наиболее старых элементов без выделения дополнительной памяти.
+    """
+
+    def __init__(self, capacity: int) -> None:
+        """Инициализирует буфер заданной вместимости.
+
+        :param capacity: Максимальное количество элементов (должно быть строго > 0).
+        :raises ValueError: Если вместимость меньше либо равна нулю.
+        """
+        if capacity <= 0:
+            raise ValueError("Вместимость кольцевого буфера должна быть больше 0")
+
+        self._capacity: int = capacity
+        self._data: list[T | None] = [None] * capacity
+        self._head: int = 0
+        self._size: int = 0
+
+    @property
+    def capacity(self) -> int:
+        """Возвращает максимальную вместимость буфера."""
+        return self._capacity
+
+    def is_empty(self) -> bool:
+        """Проверяет, пуст ли буфер."""
+        return self._size == 0
+
+    def is_full(self) -> bool:
+        """Проверяет, заполнен ли буфер до предела."""
+        return self._size == self._capacity
+
+    def append(self, item: T) -> None:
+        """Добавляет элемент в конец буфера.
+
+        Если буфер полон, перезаписывает самый старый элемент и сдвигает указатель головы.
+        """
+        if self.is_full():
+            self._data[self._head] = item
+            self._head = (self._head + 1) % self._capacity
+            return
+
+        tail_index: int = (self._head + self._size) % self._capacity
+        self._data[tail_index] = item
+        self._size += 1
+
+    def popleft(self) -> T:
+        """Извлекает и возвращает самый старый элемент из начала буфера.
+
+        :raises IndexError: Если буфер пуст.
+        """
+        if self.is_empty():
+            raise IndexError("Невозможно извлечь элемент: буфер пуст")
+
+        item: T | None = self._data[self._head]
+        self._data[self._head] = None
+        self._head = (self._head + 1) % self._capacity
+        self._size -= 1
+
+        # Гарантируем корректность типа после проверки непустого состояния
+        assert item is not None
+        return item
+
+    def peek(self) -> T:
+        """Возвращает самый старый элемент без его удаления.
+
+        :raises IndexError: Если буфер пуст.
+        """
+        if self.is_empty():
+            raise IndexError("Буфер пуст")
+
+        item: T | None = self._data[self._head]
+        assert item is not None
+        return item
+
+    def clear(self) -> None:
+        """Сбрасывает состояние буфера, очищая все элементы."""
+        self._data = [None] * self._capacity
+        self._head = 0
+        self._size = 0
+
+    def to_list(self) -> list[T]:
+        """Возвращает текущие элементы буфера в виде списка от старых к новым."""
+        return list(self)
+
+    def __len__(self) -> int:
+        """Возвращает текущее количество элементов в буфере."""
+        return self._size
+
+    def __iter__(self) -> Iterator[T]:
+        """Итерирует по элементам буфера в хронологическом порядке."""
+        for offset in range(self._size):
+            actual_index: int = (self._head + offset) % self._capacity
+            item: T | None = self._data[actual_index]
+            assert item is not None
+            yield item
+
+    def __getitem__(self, index: int) -> T:
+        """Возвращает элемент по логическому индексу от 0 до size - 1.
+
+        :raises IndexError: При выходе индекса за границы диапазона.
+        """
+        if index < 0 or index >= self._size:
+            raise IndexError("Индекс выходит за границы диапазона элементов буфера")
+
+        actual_index: int = (self._head + index) % self._capacity
+        item: T | None = self._data[actual_index]
+        assert item is not None
+        return item
+
+    def __repr__(self) -> str:
+        """Строковое представление состояния буфера."""
+        return f"RingBuffer(size={self._size}, capacity={self._capacity}, items={self.to_list()})"
+</file>
+
 <file path="pyproject.toml">
 [project]
 name = "pocket-toolkit"
@@ -455,62 +541,6 @@ dev = [
     "pytest>=9.1.1",
     "ruff>=0.16.9",
 ]
-</file>
-
-<file path="ROADMAP.md">
-# Roadmap развития Pocket Toolkit
-
-План постепенного ежедневного расширения библиотеки `pocket-toolkit`. Каждый день агент реализует одну законченную задачу, сопровождает ее тестами на 100% покрытие и отправляет коммит в репозиторий.
-
----
-
-## Этап 1: Базовые структуры данных (`structures`)
-- [x] **День 1: Ring Buffer (Кольцевой буфер)** — Фиксированный кольцевой буфер `RingBuffer[T]` с поддержкой перезаписи старых элементов, итерации и проверки вместимости.
-- [ ] **День 2: LRU Cache (Кэш вытеснения по давности)** — Класс `LRUCache[K, V]` с константным временем доступа `O(1)` на базе хеш-таблицы и двусвязного списка.
-- [ ] **День 3: Prefix Tree / Trie (Префиксное дерево)** — Класс `Trie` для эффективного поиска по префиксу, проверки наличия слов и автодополнения.
-- [ ] **День 4: Priority Queue (Очередь с приоритетами)** — Класс `PriorityQueue[T]` с поддержкой динамического обновления приоритета элементов.
-- [ ] **День 5: Disjoint Set / Union-Find** — Структура `DisjointSet` с эвристиками объединения по рангу и сжатия путей.
-- [ ] **День 6: Deque with Capacity Limit** — Двусторонняя очередь `BoundedDeque[T]` с безопасным извлечением с обоих концов.
-- [ ] **День 7: Bloom Filter (Вероятностный фильтр)** — Класс `BloomFilter` с несколькими независимыми хеш-функциями для быстрой проверки принадлежности множеству.
-
----
-
-## Этап 2: Алгоритмы и вычисления (`algorithms`)
-- [ ] **День 8: Levenshtein Distance & Fuzzy Match** — Вычисление расстояния Левенштейна и нечеткий поиск похожих строк в коллекции.
-- [ ] **День 9: Run-Length & Byte Encoding** — Модуль легковесного сжатия данных `rle_encode` и `rle_decode`.
-- [ ] **День 10: Binary Search & Upper/Lower Bound** — Утилиты двоичного поиска в отсортированных последовательностях с предикатами.
-- [ ] **День 11: Topological Sort (Топологическая сортировка)** — Алгоритм Кана для сортировки графа зависимостей и детекции циклов.
-- [ ] **День 12: Interval Intersection & Merge** — Слияние перекрывающихся интервалов и поиск пересечений отрезков времени.
-- [ ] **День 13: CRC32 & Simple Hashing** — Расчет контрольных сумм и хеширование данных без внешних библиотек.
-- [ ] **День 14: Sliding Window Aggregator** — Расчет скользящего среднего, минимума и максимума за фиксированное окно времени.
-
----
-
-## Этап 3: Функциональные утилиты и декораторы (`decorators` & `functional`)
-- [ ] **День 15: Exponential Backoff Retry** — Декоратор `@retry` с экспоненциальной задержкой, джиттером и фильтрацией исключений.
-- [ ] **День 16: Rate Limiter (Token Bucket)** — Декоратор ограничения частоты вызова функций на основе алгоритма корзины токенов.
-- [ ] **День 17: Memoize with TTL** — Декоратор мемоизации `@timed_cache` с временем жизни кэша и ограничением размера.
-- [ ] **День 18: Circuit Breaker** — Паттерн «Автоматический выключатель» для изоляции сбоящих внешних вызовов.
-- [ ] **День 19: Debounce & Throttle** — Декораторы подавления дребезга и лимитирования частоты исполнения.
-- [ ] **День 20: Pipe & Compose** — Функциональные операторы композиции и конвейера обработки данных `pipe(x, f, g)`.
-
----
-
-## Этап 4: Работа с данными и строками (`data` & `strings`)
-- [ ] **День 21: Text Slugify & Sanitizer** — Генерация URL-слагов с транслитерацией и очисткой небезопасных символов.
-- [ ] **День 22: JSON Flattener & Unflattener** — Преобразование глубоких вложенных словарей в плоскую точечную нотацию (`a.b.c`) и обратно.
-- [ ] **День 23: Human-Readable Byte & Time Formatter** — Форматирование байтов (`10.5 MB`) и промежутков времени (`2ч 15м 30с`).
-- [ ] **День 24: Deep Merge & Deep Diff** — Рекурсивное объединение словарей и нахождение дельты между сложными структурами.
-- [ ] **День 25: Safe Expression Evaluator** — Безопасный парсер и калькулятор простых математических выражений без использования `eval()`.
-- [ ] **День 26: CSV to Dict & Dict to CSV streaming** — Потоковый легковесный преобразователь табличных данных.
-
----
-
-## Этап 5: Системные и CLI утилиты (`cli` & `system`)
-- [ ] **День 27: Console Table Formatter** — Красивая печать двумерных данных в виде ASCII/Unicode таблиц с выравниванием колонок.
-- [ ] **День 28: Simple Progress Bar** — Текстовый индикатор выполнения задач в терминале с оценкой оставшегося времени.
-- [ ] **День 29: ANSI Colorizer** — Модуль стилизации консольного вывода (жирный шрифт, цвета переднего плана и фона).
-- [ ] **День 30: Env Config Parser** — Парсер переменных окружения со строгой валидацией типов (int, bool, float, list).
 </file>
 
 <file path="README.md">
