@@ -47,10 +47,12 @@ src/
   pocket_toolkit/
     structures/
       __init__.py
+      linked_list.py
       ring_buffer.py
     __init__.py
     py.typed
 tests/
+  test_linked_list.py
   test_ring_buffer.py
 .gitignore
 .python-version
@@ -63,12 +65,456 @@ ROADMAP.md
 <files>
 This section contains the contents of the repository's files.
 
+<file path="src/pocket_toolkit/structures/linked_list.py">
+"""Реализация односвязного списка."""
+
+from collections.abc import Iterable, Iterator
+
+
+class Node[T]:
+    """Узел односвязного списка.
+
+    Содержит хранимое значение и ссылку на следующий узел.
+    """
+
+    __slots__ = ("next", "value")
+
+    def __init__(self, value: T, next_node: "Node[T] | None" = None) -> None:
+        """Инициализирует узел со значением и опциональным указателем на следующий.
+
+        :param value: Полезная нагрузка узла.
+        :param next_node: Ссылка на следующий узел цепочки.
+        """
+        self.value: T = value
+        self.next: Node[T] | None = next_node
+
+    def __repr__(self) -> str:
+        """Строковое представление узла."""
+        return f"Node(value={self.value!r})"
+
+
+class LinkedList[T]:
+    """Односвязный список с поддержкой быстрого добавления в начало и конец.
+
+    Поддерживает вставку за O(1), удаление по значению, доступ по индексу и обход.
+    """
+
+    def __init__(self, iterable: Iterable[T] | None = None) -> None:
+        """Создает пустой список или наполняет его элементами из переданной последовательности.
+
+        :param iterable: Опциональная последовательность начальных элементов.
+        """
+        self._head: Node[T] | None = None
+        self._tail: Node[T] | None = None
+        self._size: int = 0
+
+        if iterable is not None:
+            for item in iterable:
+                self.append(item)
+
+    def is_empty(self) -> bool:
+        """Проверяет, пуст ли список."""
+        return self._size == 0
+
+    def append(self, item: T) -> None:
+        """Добавляет элемент в конец списка за O(1).
+
+        :param item: Добавляемое значение.
+        """
+        new_node: Node[T] = Node(item)
+        if self._tail is None:
+            self._head = new_node
+            self._tail = new_node
+            self._size += 1
+            return
+
+        self._tail.next = new_node
+        self._tail = new_node
+        self._size += 1
+
+    def prepend(self, item: T) -> None:
+        """Добавляет элемент в начало списка за O(1).
+
+        :param item: Добавляемое значение.
+        """
+        new_node: Node[T] = Node(item, next_node=self._head)
+        self._head = new_node
+        if self._tail is None:
+            self._tail = new_node
+        self._size += 1
+
+    def popleft(self) -> T:
+        """Удаляет и возвращает первый элемент списка за O(1).
+
+        :return: Извлеченный элемент.
+        :raises IndexError: Если список пуст.
+        """
+        if self._head is None:
+            raise IndexError("Невозможно извлечь элемент: список пуст")
+
+        target: Node[T] = self._head
+        self._head = target.next
+        self._size -= 1
+
+        if self._head is None:
+            self._tail = None
+
+        return target.value
+
+    def pop(self) -> T:
+        """Удаляет и возвращает последний элемент списка за O(n).
+
+        :return: Извлеченный элемент.
+        :raises IndexError: Если список пуст.
+        """
+        if self._head is None:
+            raise IndexError("Невозможно извлечь элемент: список пуст")
+
+        if self._head is self._tail:
+            value: T = self._head.value
+            self._head = None
+            self._tail = None
+            self._size = 0
+            return value
+
+        current: Node[T] = self._head
+        while current.next is not None and current.next is not self._tail:
+            current = current.next
+
+        assert self._tail is not None
+        last_value: T = self._tail.value
+        current.next = None
+        self._tail = current
+        self._size -= 1
+        return last_value
+
+    def peek_head(self) -> T:
+        """Возвращает первый элемент без его удаления.
+
+        :return: Значение первого узла.
+        :raises IndexError: Если список пуст.
+        """
+        if self._head is None:
+            raise IndexError("Список пуст")
+        return self._head.value
+
+    def peek_tail(self) -> T:
+        """Возвращает последний элемент без его удаления.
+
+        :return: Значение последнего узла.
+        :raises IndexError: Если список пуст.
+        """
+        if self._tail is None:
+            raise IndexError("Список пуст")
+        return self._tail.value
+
+    def remove(self, item: T) -> bool:
+        """Удаляет первое вхождение элемента по значению.
+
+        :param item: Искомое значение для удаления.
+        :return: True, если узел найден и удален; False в противном случае.
+        """
+        if self._head is None:
+            return False
+
+        if self._head.value == item:
+            self.popleft()
+            return True
+
+        prev: Node[T] = self._head
+        curr: Node[T] | None = self._head.next
+
+        while curr is not None:
+            if curr.value == item:
+                prev.next = curr.next
+                if curr is self._tail:
+                    self._tail = prev
+                self._size -= 1
+                return True
+            prev = curr
+            curr = curr.next
+
+        return False
+
+    def clear(self) -> None:
+        """Очищает список, сбрасывая ссылки на узлы и счетчик длины."""
+        self._head = None
+        self._tail = None
+        self._size = 0
+
+    def to_list(self) -> list[T]:
+        """Преобразует элементы списка в стандартный список Python."""
+        return list(self)
+
+    def _get_node_at(self, index: int) -> Node[T]:
+        """Возвращает узел по нормализованному индексу.
+
+        :param index: Скорректированный неотрицательный индекс.
+        :return: Целевой узел цепочки.
+        """
+        current: Node[T] | None = self._head
+        assert current is not None
+        for _ in range(index):
+            assert current.next is not None
+            current = current.next
+        return current
+
+    def __len__(self) -> int:
+        """Возвращает общее количество узлов в списке."""
+        return self._size
+
+    def __iter__(self) -> Iterator[T]:
+        """Прямой обход элементов списка от головы к хвосту."""
+        current: Node[T] | None = self._head
+        while current is not None:
+            yield current.value
+            current = current.next
+
+    def __contains__(self, item: object) -> bool:
+        """Проверяет наличие элемента в списке."""
+        for val in self:
+            if val == item:
+                return True
+        return False
+
+    def __getitem__(self, index: int) -> T:
+        """Возвращает элемент по индексу (поддерживает отрицательные индексы).
+
+        :param index: Индекс элемента.
+        :return: Значение узла.
+        :raises IndexError: Если индекс выходит за границы.
+        """
+        normalized_index: int = index if index >= 0 else index + self._size
+        if normalized_index < 0 or normalized_index >= self._size:
+            raise IndexError("Индекс выходит за границы связного списка")
+
+        return self._get_node_at(normalized_index).value
+
+    def __repr__(self) -> str:
+        """Строковое представление списка."""
+        return f"LinkedList({self.to_list()!r})"
+</file>
+
+<file path="tests/test_linked_list.py">
+"""Модульные тесты для односвязного списка LinkedList и узла Node."""
+
+import pytest
+
+from pocket_toolkit.structures.linked_list import LinkedList, Node
+
+
+def test_node_creation_and_repr() -> None:
+    """Проверка создания узла и его строкового представления."""
+    node: Node[int] = Node(10)
+    assert node.value == 10
+    assert node.next is None
+    assert repr(node) == "Node(value=10)"
+
+    child_node: Node[int] = Node(20, node)
+    assert child_node.value == 20
+    assert child_node.next is node
+
+
+def test_linked_list_init_empty() -> None:
+    """Проверка инициализации пустого списка."""
+    lst: LinkedList[int] = LinkedList()
+    assert len(lst) == 0
+    assert lst.is_empty() is True
+    assert lst.to_list() == []
+
+
+def test_linked_list_init_with_iterable() -> None:
+    """Проверка инициализации элементами из итерируемого объекта."""
+    lst: LinkedList[str] = LinkedList(["apple", "banana", "cherry"])
+    assert len(lst) == 3
+    assert lst.is_empty() is False
+    assert lst.to_list() == ["apple", "banana", "cherry"]
+    assert lst.peek_head() == "apple"
+    assert lst.peek_tail() == "cherry"
+
+
+def test_linked_list_append() -> None:
+    """Проверка добавления элементов в конец списка."""
+    lst: LinkedList[int] = LinkedList()
+    lst.append(1)
+    assert len(lst) == 1
+    assert lst.peek_head() == 1
+    assert lst.peek_tail() == 1
+
+    lst.append(2)
+    assert len(lst) == 2
+    assert lst.peek_head() == 1
+    assert lst.peek_tail() == 2
+    assert lst.to_list() == [1, 2]
+
+
+def test_linked_list_prepend() -> None:
+    """Проверка добавления элементов в начало списка."""
+    lst: LinkedList[int] = LinkedList()
+    lst.prepend(10)
+    assert len(lst) == 1
+    assert lst.peek_head() == 10
+    assert lst.peek_tail() == 10
+
+    lst.prepend(20)
+    assert len(lst) == 2
+    assert lst.peek_head() == 20
+    assert lst.peek_tail() == 10
+    assert lst.to_list() == [20, 10]
+
+
+def test_linked_list_peek_empty_raises() -> None:
+    """Проверка исключений при вызове peek_head и peek_tail для пустого списка."""
+    lst: LinkedList[float] = LinkedList()
+    with pytest.raises(IndexError, match="Список пуст"):
+        lst.peek_head()
+
+    with pytest.raises(IndexError, match="Список пуст"):
+        lst.peek_tail()
+
+
+def test_linked_list_popleft() -> None:
+    """Проверка удаления элементов из начала списка."""
+    lst: LinkedList[int] = LinkedList([10, 20, 30])
+    assert lst.popleft() == 10
+    assert len(lst) == 2
+    assert lst.peek_head() == 20
+
+    assert lst.popleft() == 20
+    assert lst.popleft() == 30
+    assert len(lst) == 0
+    assert lst.is_empty() is True
+
+    with pytest.raises(IndexError, match="список пуст"):
+        lst.popleft()
+
+
+def test_linked_list_pop() -> None:
+    """Проверка удаления элементов с конца списка."""
+    lst: LinkedList[str] = LinkedList(["first", "second", "third"])
+    assert lst.pop() == "third"
+    assert len(lst) == 2
+    assert lst.peek_tail() == "second"
+
+    assert lst.pop() == "second"
+    assert len(lst) == 1
+    assert lst.peek_head() == "first"
+    assert lst.peek_tail() == "first"
+
+    assert lst.pop() == "first"
+    assert len(lst) == 0
+    assert lst.is_empty() is True
+
+    with pytest.raises(IndexError, match="список пуст"):
+        lst.pop()
+
+
+def test_linked_list_remove_head() -> None:
+    """Проверка удаления первого элемента списка через remove."""
+    lst: LinkedList[int] = LinkedList([1, 2, 3])
+    assert lst.remove(1) is True
+    assert lst.to_list() == [2, 3]
+    assert lst.peek_head() == 2
+    assert len(lst) == 2
+
+
+def test_linked_list_remove_middle() -> None:
+    """Проверка удаления промежуточного элемента списка через remove."""
+    lst: LinkedList[int] = LinkedList([1, 2, 3])
+    assert lst.remove(2) is True
+    assert lst.to_list() == [1, 3]
+    assert len(lst) == 2
+    assert lst.peek_head() == 1
+    assert lst.peek_tail() == 3
+
+
+def test_linked_list_remove_tail() -> None:
+    """Проверка удаления последнего элемента списка через remove."""
+    lst: LinkedList[int] = LinkedList([1, 2, 3])
+    assert lst.remove(3) is True
+    assert lst.to_list() == [1, 2]
+    assert lst.peek_tail() == 2
+    assert len(lst) == 2
+
+
+def test_linked_list_remove_single_item() -> None:
+    """Проверка удаления единственного элемента в списке."""
+    lst: LinkedList[int] = LinkedList([99])
+    assert lst.remove(99) is True
+    assert len(lst) == 0
+    assert lst.is_empty() is True
+    assert lst.to_list() == []
+
+
+def test_linked_list_remove_missing_and_empty() -> None:
+    """Проверка попытки удаления несуществующего элемента."""
+    empty_lst: LinkedList[int] = LinkedList()
+    assert empty_lst.remove(42) is False
+
+    lst: LinkedList[int] = LinkedList([1, 2, 3])
+    assert lst.remove(999) is False
+    assert len(lst) == 3
+
+
+def test_linked_list_clear() -> None:
+    """Проверка очистки связного списка."""
+    lst: LinkedList[int] = LinkedList([1, 2, 3, 4])
+    lst.clear()
+    assert len(lst) == 0
+    assert lst.is_empty() is True
+    assert lst.to_list() == []
+
+
+def test_linked_list_contains() -> None:
+    """Проверка оператора принадлежности `in`."""
+    lst: LinkedList[str] = LinkedList(["alpha", "beta", "gamma"])
+    assert "alpha" in lst
+    assert "beta" in lst
+    assert "delta" not in lst
+
+
+def test_linked_list_iteration() -> None:
+    """Проверка прямого обхода списка."""
+    raw_data: list[int] = [10, 20, 30, 40]
+    lst: LinkedList[int] = LinkedList(raw_data)
+    collected: list[int] = [item for item in lst]
+    assert collected == raw_data
+
+
+def test_linked_list_getitem() -> None:
+    """Проверка доступа по положительному и отрицательному индексу."""
+    lst: LinkedList[str] = LinkedList(["a", "b", "c", "d"])
+    assert lst[0] == "a"
+    assert lst[1] == "b"
+    assert lst[3] == "d"
+    assert lst[-1] == "d"
+    assert lst[-4] == "a"
+
+    with pytest.raises(IndexError, match="Индекс выходит за границы"):
+        _ = lst[4]
+
+    with pytest.raises(IndexError, match="Индекс выходит за границы"):
+        _ = lst[-5]
+
+
+def test_linked_list_repr() -> None:
+    """Проверка строкового представления списка."""
+    empty_lst: LinkedList[int] = LinkedList()
+    assert repr(empty_lst) == "LinkedList([])"
+
+    populated_lst: LinkedList[int] = LinkedList([1, 2, 3])
+    assert repr(populated_lst) == "LinkedList([1, 2, 3])"
+</file>
+
 <file path="src/pocket_toolkit/structures/__init__.py">
 """Модуль структур данных библиотеки pocket-toolkit."""
 
+from pocket_toolkit.structures.linked_list import LinkedList, Node
 from pocket_toolkit.structures.ring_buffer import RingBuffer
 
 __all__: list[str] = [
+    "LinkedList",
+    "Node",
     "RingBuffer",
 ]
 </file>
@@ -76,9 +522,12 @@ __all__: list[str] = [
 <file path="src/pocket_toolkit/__init__.py">
 """Pocket Toolkit — коллекция легковесных структур данных и утилит."""
 
+from pocket_toolkit.structures.linked_list import LinkedList, Node
 from pocket_toolkit.structures.ring_buffer import RingBuffer
 
 __all__: list[str] = [
+    "LinkedList",
+    "Node",
     "RingBuffer",
 ]
 </file>
@@ -272,92 +721,6 @@ On each automated daily run:
 7. Commit changes strictly in Russian using Conventional Commits format:
    - Example: `feat(structures): реализовать кольцевой буфер и модульные тесты`
 8. Push commits to GitHub: `git push Gupkagrop main`.
-</file>
-
-<file path="ROADMAP.md">
-# Roadmap развития Pocket Toolkit (60 дней)
-
-План постепенного ежедневного расширения библиотеки `pocket-toolkit`. Каждый день агент реализует одну законченную изолированную задачу, сопровождает ее подробными комментариями и docstrings на русском языке, покрывает модульными тестами на 100% и отправляет коммит в удаленный репозиторий.
-
----
-
-## Этап 1: Структуры данных (`structures`) — Дни 1–12
-- [x] **День 1: Ring Buffer (Кольцевой буфер)** — Фиксированный кольцевой буфер `RingBuffer[T]` с поддержкой перезаписи старых элементов, итерации и проверки вместимости.
-- [ ] **День 2: Singly Linked List (Односвязный список)** — Односвязный список `LinkedList[T]` с поддержкой вставки в начало/конец, удаления по значению и прямого обхода.
-- [ ] **День 3: Doubly Linked List (Двусвязный список)** — Двусвязный список `DoublyLinkedList[T]` с быстрым удалением узлов за `O(1)` и двусторонней итерацией.
-- [ ] **День 4: LRU Cache (Кэш вытеснения по давности)** — Класс `LRUCache[K, V]` с константным временем доступа `O(1)` на базе хэш-таблицы и двусвязного списка.
-- [ ] **День 5: LFU Cache (Кэш вытеснения по частоте)** — Класс `LFUCache[K, V]` с вытеснением наименее часто запрашиваемых ключей за `O(1)`.
-- [ ] **День 6: Prefix Tree / Trie (Префиксное дерево)** — Класс `Trie` для эффективного поиска по префиксу, проверки наличия слов и автодополнения.
-- [ ] **День 7: Radix Tree (Сжатое префиксное дерево)** — Оптимизированное дерево `RadixTree` со слиянием узлов с общими префиксами.
-- [ ] **День 8: Priority Queue (Очередь с приоритетами)** — Класс `PriorityQueue[T]` на базе бинарной кучи с поддержкой минимального/максимального приоритета.
-- [ ] **День 9: Disjoint Set / Union-Find** — Структура `DisjointSet` с эвристиками объединения по рангу и сжатия путей.
-- [ ] **День 10: Bounded Deque (Ограниченная двусторонняя очередь)** — Двусторонняя очередь `BoundedDeque[T]` с лимитом размера и безопасным выталкиванием.
-- [ ] **День 11: Bloom Filter (Вероятностный фильтр)** — Класс `BloomFilter` с независимыми хеш-функциями для быстрой проверки принадлежности множеству.
-- [ ] **День 12: Sparse Matrix (Разреженная матрица)** — Структура `SparseMatrix` на базе словаря координат для эффективного хранения нулевых матриц.
-
----
-
-## Этап 2: Алгоритмы и вычисления (`algorithms`) — Дни 13–24
-- [ ] **День 13: Binary Search Variants** — Утилиты двоичного поиска в отсортированных последовательностях: `lower_bound`, `upper_bound`, `binary_search`.
-- [ ] **День 14: Levenshtein Distance & Similarity** — Вычисление расстояния Левенштейна и расчет коэффициента текстового сходства.
-- [ ] **День 15: Run-Length Encoding / Decoding** — Модуль легковесного сжатия и распаковки данных `rle_encode` и `rle_decode`.
-- [ ] **День 16: Topological Sort (Топологическая сортировка)** — Алгоритм Кана для разрешения зависимостей в направленном ациклическом графе (DAG).
-- [ ] **День 17: Interval Intersection & Merging** — Алгоритмы слияния перекрывающихся интервалов и нахождения общего пересечения отрезков.
-- [ ] **День 18: Sliding Window Aggregator** — Класс скользящего окна для расчета среднего, минимума и максимума за фиксированный интервал.
-- [ ] **День 19: Knuth-Morris-Pratt (KMP) Search** — Быстрый поиск вхождений подстроки в строке с построением префикс-функции (массива $\pi$).
-- [ ] **День 20: Simple Huffman Coding** — Построение дерева Хаффмана, кодирование и декодирование текстовых сообщений.
-- [ ] **День 21: Dijkstra Shortest Path** — Поиск кратчайшего пути между вершинами во взвешенном графе с неотрицательными весами.
-- [ ] **День 22: Fast Power & Modular Arithmetic** — Алгоритмы быстрого бинарного возведения в степень и нахождения обратного по модулю числа.
-- [ ] **День 23: CRC32 & FNV-1a Hashing** — Собственные легковесные функции расчета контрольных сумм CRC32 и некриптографического хеша FNV-1a.
-- [ ] **День 24: Reservoir Sampling & Fisher-Yates** — Алгоритм выборки $k$ случайных элементов из бесконечного потока и тасование массива за $O(n)$.
-
----
-
-## Этап 3: Декораторы и функциональные утилиты (`decorators` & `functional`) — Дни 25–36
-- [ ] **День 25: Retry with Exponential Backoff** — Декоратор `@retry` с экспоненциальной задержкой, добавлением джиттера и фильтрацией исключений.
-- [ ] **День 26: Token Bucket Rate Limiter** — Декоратор ограничения частоты вызовов на основе алгоритма корзины токенов.
-- [ ] **День 27: Leaky Bucket Limiter** — Ограничитель трафика и вызовов по алгоритму «протекающего ведра» с фиксированной скоростью утечки.
-- [ ] **День 28: Timed Cache with TTL** — Декоратор мемоизации `@timed_cache` с временем жизни кэша и ограничением максимального размера.
-- [ ] **День 29: Circuit Breaker Pattern** — Защитный выключатель (`CircuitBreaker`) с состояниями CLOSED, OPEN, HALF_OPEN для сетевых вызовов.
-- [ ] **День 30: Debounce Decorator** — Декоратор подавления дребезга: откладывает выполнение функции до истечения паузы тишины.
-- [ ] **День 31: Throttle Decorator** — Декоратор пропуска вызовов: гарантирует вызов функции не чаще одного раза за заданный интервал.
-- [ ] **День 32: Pipe & Compose** — Функциональные утилиты для линейного конвейера обработки данных `pipe(val, f, g)` и композиции функций `compose(f, g)`.
-- [ ] **День 33: Lazy Property Wrapper** — Дескриптор `@lazy_property` для отложенного вычисления атрибута объекта при первом обращении.
-- [ ] **День 34: Function Currying** — Функция `curry` для преобразования функции нескольких аргументов в цепочку одноместных функций.
-- [ ] **День 35: Execution Timer & Profiler** — Декоратор `@profile_time` для логирования и сбора статистики времени выполнения функций.
-- [ ] **День 36: Deprecation & Contract Validator** — Декораторы `@deprecated` с выводом предупреждений и `@validate_types` для проверки сигнатур.
-
----
-
-## Этап 4: Обработка данных и строки (`data` & `strings`) — Дни 37–48
-- [ ] **День 37: Text Slugify & Transliteration** — Генерация чистых URL-слагов с транслитерацией кириллицы в латиницу.
-- [ ] **День 38: String Case Converters** — Конвертер регистра строк: преобразование между `camelCase`, `snake_case`, `kebab-case`, `PascalCase`.
-- [ ] **День 39: JSON Flattener & Unflattener** — Преобразование глубоких вложенных структур в плоские словари вида `{"a.b.c": 1}` и обратно.
-- [ ] **День 40: Deep Dict Merge & Patch** — Рекурсивное слияние словарей и применение JSON-like дельта-патчей.
-- [ ] **День 41: Dict Difference & Delta Finder** — Утилита поиска добавленных, удаленных и измененных ключей между двумя структурами.
-- [ ] **День 42: Human-Readable Byte Formatter** — Форматирование размера данных в байтах (КБ, МБ, ГБ) с поддержкой стандартов SI и IEC.
-- [ ] **День 43: Time Duration Formatter** — Преобразование секунд и миллисекунд в компактный вид (например, `2ч 15м 30с`).
-- [ ] **День 44: Safe Math Expression Evaluator** — Безопасный парсер и калькулятор базовых арифметических выражений на базе AST без вызова `eval()`.
-- [ ] **День 45: SemVer (Semantic Versioning) Parser** — Класс `SemanticVersion` для парсинга, сравнения и валидации версий по спецификации SemVer 2.0.
-- [ ] **День 46: Simple Template Engine** — Легковесный шаблонизатор текста с подстановкой переменных `{{ var }}` и условными блоками `{% if %}`.
-- [ ] **День 47: URL Query String Parser & Builder** — Разбор и сборка query-параметров URL с корректным экранированием символов.
-- [ ] **День 48: Streaming CSV Parser & Generator** — Потоковый легковесный парсер и генератор CSV с поддержкой кавычек и экранирования.
-
----
-
-## Этап 5: Системные, CLI и файловые утилиты (`cli` & `system`) — Дни 49–60
-- [ ] **День 49: ANSI Colorizer & Text Styler** — Модуль стилизации консольного текста (цвета текста, фоны, жирный, подчеркивание) с автоопределением TTY.
-- [ ] **День 50: CLI Table Formatter** — Форматирование и вывод двумерных данных в виде аккуратных ASCII/Unicode таблиц с автоподбором ширины колонок.
-- [ ] **День 51: Text Progress Bar** — Текстовый индикатор выполнения задач в консоли с отображением процентов, шкалы и оценки оставшегося времени.
-- [ ] **День 52: CLI Argument Parser** — Минималистичный и типобезопасный парсер позиционных аргументов и флагов командной строки.
-- [ ] **День 53: Env File & Configuration Parser** — Парсер `.env` файлов со строгим приведением типов к `int`, `float`, `bool`, `list`.
-- [ ] **День 54: Glob & Path Pattern Matcher** — Сопоставление путей файлов по шаблонам с поддержкой звездочек `*`, `**` и знака вопроса `?`.
-- [ ] **День 55: Temp File & Directory Contexts** — Контекстные менеджеры для создания гарантированно удаляемых временных файлов и папок.
-- [ ] **День 56: In-Memory File Buffer** — Виртуальный потоковый буфер данных с поддержкой позиционирования `seek`, чтения и поблочной записи.
-- [ ] **День 57: Atomic File Writer** — Утилита безопасной атомарной записи файлов через временный файл с последующим переименованием.
-- [ ] **День 58: Simple Structured Logger** — Легковесный логгер со структурированным выводом (JSON или текст) и цветовой дифференциацией уровней.
-- [ ] **День 59: Event Bus / Observer** — Потокобезопасная синхронная шина событий с подпиской, отпиской и фильтрацией по типу события.
-- [ ] **День 60: System Diagnostic Collector** — Сборщик системных метрик окружения (версия ОС, Python, память процесса, системное время) на стандартной библиотеке.
 </file>
 
 <file path=".github/workflows/ci.yml">
@@ -591,6 +954,92 @@ cd important-project
 uv sync
 uv run pytest
 ```
+</file>
+
+<file path="ROADMAP.md">
+# Roadmap развития Pocket Toolkit (60 дней)
+
+План постепенного ежедневного расширения библиотеки `pocket-toolkit`. Каждый день агент реализует одну законченную изолированную задачу, сопровождает ее подробными комментариями и docstrings на русском языке, покрывает модульными тестами на 100% и отправляет коммит в удаленный репозиторий.
+
+---
+
+## Этап 1: Структуры данных (`structures`) — Дни 1–12
+- [x] **День 1: Ring Buffer (Кольцевой буфер)** — Фиксированный кольцевой буфер `RingBuffer[T]` с поддержкой перезаписи старых элементов, итерации и проверки вместимости.
+- [x] **День 2: Singly Linked List (Односвязный список)** — Односвязный список `LinkedList[T]` с поддержкой вставки в начало/конец, удаления по значению и прямого обхода.
+- [ ] **День 3: Doubly Linked List (Двусвязный список)** — Двусвязный список `DoublyLinkedList[T]` с быстрым удалением узлов за `O(1)` и двусторонней итерацией.
+- [ ] **День 4: LRU Cache (Кэш вытеснения по давности)** — Класс `LRUCache[K, V]` с константным временем доступа `O(1)` на базе хэш-таблицы и двусвязного списка.
+- [ ] **День 5: LFU Cache (Кэш вытеснения по частоте)** — Класс `LFUCache[K, V]` с вытеснением наименее часто запрашиваемых ключей за `O(1)`.
+- [ ] **День 6: Prefix Tree / Trie (Префиксное дерево)** — Класс `Trie` для эффективного поиска по префиксу, проверки наличия слов и автодополнения.
+- [ ] **День 7: Radix Tree (Сжатое префиксное дерево)** — Оптимизированное дерево `RadixTree` со слиянием узлов с общими префиксами.
+- [ ] **День 8: Priority Queue (Очередь с приоритетами)** — Класс `PriorityQueue[T]` на базе бинарной кучи с поддержкой минимального/максимального приоритета.
+- [ ] **День 9: Disjoint Set / Union-Find** — Структура `DisjointSet` с эвристиками объединения по рангу и сжатия путей.
+- [ ] **День 10: Bounded Deque (Ограниченная двусторонняя очередь)** — Двусторонняя очередь `BoundedDeque[T]` с лимитом размера и безопасным выталкиванием.
+- [ ] **День 11: Bloom Filter (Вероятностный фильтр)** — Класс `BloomFilter` с независимыми хеш-функциями для быстрой проверки принадлежности множеству.
+- [ ] **День 12: Sparse Matrix (Разреженная матрица)** — Структура `SparseMatrix` на базе словаря координат для эффективного хранения нулевых матриц.
+
+---
+
+## Этап 2: Алгоритмы и вычисления (`algorithms`) — Дни 13–24
+- [ ] **День 13: Binary Search Variants** — Утилиты двоичного поиска в отсортированных последовательностях: `lower_bound`, `upper_bound`, `binary_search`.
+- [ ] **День 14: Levenshtein Distance & Similarity** — Вычисление расстояния Левенштейна и расчет коэффициента текстового сходства.
+- [ ] **День 15: Run-Length Encoding / Decoding** — Модуль легковесного сжатия и распаковки данных `rle_encode` и `rle_decode`.
+- [ ] **День 16: Topological Sort (Топологическая сортировка)** — Алгоритм Кана для разрешения зависимостей в направленном ациклическом графе (DAG).
+- [ ] **День 17: Interval Intersection & Merging** — Алгоритмы слияния перекрывающихся интервалов и нахождения общего пересечения отрезков.
+- [ ] **День 18: Sliding Window Aggregator** — Класс скользящего окна для расчета среднего, минимума и максимума за фиксированный интервал.
+- [ ] **День 19: Knuth-Morris-Pratt (KMP) Search** — Быстрый поиск вхождений подстроки в строке с построением префикс-функции (массива $\pi$).
+- [ ] **День 20: Simple Huffman Coding** — Построение дерева Хаффмана, кодирование и декодирование текстовых сообщений.
+- [ ] **День 21: Dijkstra Shortest Path** — Поиск кратчайшего пути между вершинами во взвешенном графе с неотрицательными весами.
+- [ ] **День 22: Fast Power & Modular Arithmetic** — Алгоритмы быстрого бинарного возведения в степень и нахождения обратного по модулю числа.
+- [ ] **День 23: CRC32 & FNV-1a Hashing** — Собственные легковесные функции расчета контрольных сумм CRC32 и некриптографического хеша FNV-1a.
+- [ ] **День 24: Reservoir Sampling & Fisher-Yates** — Алгоритм выборки $k$ случайных элементов из бесконечного потока и тасование массива за $O(n)$.
+
+---
+
+## Этап 3: Декораторы и функциональные утилиты (`decorators` & `functional`) — Дни 25–36
+- [ ] **День 25: Retry with Exponential Backoff** — Декоратор `@retry` с экспоненциальной задержкой, добавлением джиттера и фильтрацией исключений.
+- [ ] **День 26: Token Bucket Rate Limiter** — Декоратор ограничения частоты вызовов на основе алгоритма корзины токенов.
+- [ ] **День 27: Leaky Bucket Limiter** — Ограничитель трафика и вызовов по алгоритму «протекающего ведра» с фиксированной скоростью утечки.
+- [ ] **День 28: Timed Cache with TTL** — Декоратор мемоизации `@timed_cache` с временем жизни кэша и ограничением максимального размера.
+- [ ] **День 29: Circuit Breaker Pattern** — Защитный выключатель (`CircuitBreaker`) с состояниями CLOSED, OPEN, HALF_OPEN для сетевых вызовов.
+- [ ] **День 30: Debounce Decorator** — Декоратор подавления дребезга: откладывает выполнение функции до истечения паузы тишины.
+- [ ] **День 31: Throttle Decorator** — Декоратор пропуска вызовов: гарантирует вызов функции не чаще одного раза за заданный интервал.
+- [ ] **День 32: Pipe & Compose** — Функциональные утилиты для линейного конвейера обработки данных `pipe(val, f, g)` и композиции функций `compose(f, g)`.
+- [ ] **День 33: Lazy Property Wrapper** — Дескриптор `@lazy_property` для отложенного вычисления атрибута объекта при первом обращении.
+- [ ] **День 34: Function Currying** — Функция `curry` для преобразования функции нескольких аргументов в цепочку одноместных функций.
+- [ ] **День 35: Execution Timer & Profiler** — Декоратор `@profile_time` для логирования и сбора статистики времени выполнения функций.
+- [ ] **День 36: Deprecation & Contract Validator** — Декораторы `@deprecated` с выводом предупреждений и `@validate_types` для проверки сигнатур.
+
+---
+
+## Этап 4: Обработка данных и строки (`data` & `strings`) — Дни 37–48
+- [ ] **День 37: Text Slugify & Transliteration** — Генерация чистых URL-слагов с транслитерацией кириллицы в латиницу.
+- [ ] **День 38: String Case Converters** — Конвертер регистра строк: преобразование между `camelCase`, `snake_case`, `kebab-case`, `PascalCase`.
+- [ ] **День 39: JSON Flattener & Unflattener** — Преобразование глубоких вложенных структур в плоские словари вида `{"a.b.c": 1}` и обратно.
+- [ ] **День 40: Deep Dict Merge & Patch** — Рекурсивное слияние словарей и применение JSON-like дельта-патчей.
+- [ ] **День 41: Dict Difference & Delta Finder** — Утилита поиска добавленных, удаленных и измененных ключей между двумя структурами.
+- [ ] **День 42: Human-Readable Byte Formatter** — Форматирование размера данных в байтах (КБ, МБ, ГБ) с поддержкой стандартов SI и IEC.
+- [ ] **День 43: Time Duration Formatter** — Преобразование секунд и миллисекунд в компактный вид (например, `2ч 15м 30с`).
+- [ ] **День 44: Safe Math Expression Evaluator** — Безопасный парсер и калькулятор базовых арифметических выражений на базе AST без вызова `eval()`.
+- [ ] **День 45: SemVer (Semantic Versioning) Parser** — Класс `SemanticVersion` для парсинга, сравнения и валидации версий по спецификации SemVer 2.0.
+- [ ] **День 46: Simple Template Engine** — Легковесный шаблонизатор текста с подстановкой переменных `{{ var }}` и условными блоками `{% if %}`.
+- [ ] **День 47: URL Query String Parser & Builder** — Разбор и сборка query-параметров URL с корректным экранированием символов.
+- [ ] **День 48: Streaming CSV Parser & Generator** — Потоковый легковесный парсер и генератор CSV с поддержкой кавычек и экранирования.
+
+---
+
+## Этап 5: Системные, CLI и файловые утилиты (`cli` & `system`) — Дни 49–60
+- [ ] **День 49: ANSI Colorizer & Text Styler** — Модуль стилизации консольного текста (цвета текста, фоны, жирный, подчеркивание) с автоопределением TTY.
+- [ ] **День 50: CLI Table Formatter** — Форматирование и вывод двумерных данных в виде аккуратных ASCII/Unicode таблиц с автоподбором ширины колонок.
+- [ ] **День 51: Text Progress Bar** — Текстовый индикатор выполнения задач в консоли с отображением процентов, шкалы и оценки оставшегося времени.
+- [ ] **День 52: CLI Argument Parser** — Минималистичный и типобезопасный парсер позиционных аргументов и флагов командной строки.
+- [ ] **День 53: Env File & Configuration Parser** — Парсер `.env` файлов со строгим приведением типов к `int`, `float`, `bool`, `list`.
+- [ ] **День 54: Glob & Path Pattern Matcher** — Сопоставление путей файлов по шаблонам с поддержкой звездочек `*`, `**` и знака вопроса `?`.
+- [ ] **День 55: Temp File & Directory Contexts** — Контекстные менеджеры для создания гарантированно удаляемых временных файлов и папок.
+- [ ] **День 56: In-Memory File Buffer** — Виртуальный потоковый буфер данных с поддержкой позиционирования `seek`, чтения и поблочной записи.
+- [ ] **День 57: Atomic File Writer** — Утилита безопасной атомарной записи файлов через временный файл с последующим переименованием.
+- [ ] **День 58: Simple Structured Logger** — Легковесный логгер со структурированным выводом (JSON или текст) и цветовой дифференциацией уровней.
+- [ ] **День 59: Event Bus / Observer** — Потокобезопасная синхронная шина событий с подпиской, отпиской и фильтрацией по типу события.
+- [ ] **День 60: System Diagnostic Collector** — Сборщик системных метрик окружения (версия ОС, Python, память процесса, системное время) на стандартной библиотеке.
 </file>
 
 </files>
