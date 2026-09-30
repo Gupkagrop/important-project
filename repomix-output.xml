@@ -47,11 +47,13 @@ src/
   pocket_toolkit/
     structures/
       __init__.py
+      doubly_linked_list.py
       linked_list.py
       ring_buffer.py
     __init__.py
     py.typed
 tests/
+  test_doubly_linked_list.py
   test_linked_list.py
   test_ring_buffer.py
 .gitignore
@@ -64,6 +66,652 @@ ROADMAP.md
 
 <files>
 This section contains the contents of the repository's files.
+
+<file path="src/pocket_toolkit/structures/doubly_linked_list.py">
+"""Реализация двусвязного списка с быстрым удалением узлов за O(1)."""
+
+from collections.abc import Iterable, Iterator
+
+
+class DoublyNode[T]:
+    """Узел двусвязного списка.
+
+    Содержит хранимое значение, а также ссылки на предыдущий и следующий узлы.
+    """
+
+    __slots__ = ("next", "prev", "value")
+
+    def __init__(
+        self,
+        value: T,
+        prev_node: "DoublyNode[T] | None" = None,
+        next_node: "DoublyNode[T] | None" = None,
+    ) -> None:
+        """Инициализирует узел двусвязного списка.
+
+        :param value: Полезная нагрузка узла.
+        :param prev_node: Ссылка на предыдущий узел цепочки.
+        :param next_node: Ссылка на следующий узел цепочки.
+        """
+        self.value: T = value
+        self.prev: DoublyNode[T] | None = prev_node
+        self.next: DoublyNode[T] | None = next_node
+
+    def __repr__(self) -> str:
+        """Строковое представление узла."""
+        return f"DoublyNode(value={self.value!r})"
+
+
+class DoublyLinkedList[T]:
+    """Двусвязный список с поддержкой двусторонней итерации и O(1) удаления узлов."""
+
+    def __init__(self, iterable: Iterable[T] | None = None) -> None:
+        """Инициализирует пустой двусвязный список или наполняет его элементами.
+
+        :param iterable: Опциональная последовательность начальных элементов.
+        """
+        self._head: DoublyNode[T] | None = None
+        self._tail: DoublyNode[T] | None = None
+        self._size: int = 0
+
+        if iterable is not None:
+            for item in iterable:
+                self.append(item)
+
+    @property
+    def head_node(self) -> DoublyNode[T] | None:
+        """Возвращает первый узел списка или None, если список пуст."""
+        return self._head
+
+    @property
+    def tail_node(self) -> DoublyNode[T] | None:
+        """Возвращает последний узел списка или None, если список пуст."""
+        return self._tail
+
+    def is_empty(self) -> bool:
+        """Проверяет, пуст ли список."""
+        return self._size == 0
+
+    def append_node(self, node: DoublyNode[T]) -> None:
+        """Вставляет свободный узел в конец списка за O(1).
+
+        :param node: Добавляемый узел.
+        """
+        node.prev = self._tail
+        node.next = None
+
+        if self._tail is None:
+            self._head = node
+            self._tail = node
+            self._size += 1
+            return
+
+        self._tail.next = node
+        self._tail = node
+        self._size += 1
+
+    def prepend_node(self, node: DoublyNode[T]) -> None:
+        """Вставляет свободный узел в начало списка за O(1).
+
+        :param node: Добавляемый узел.
+        """
+        node.prev = None
+        node.next = self._head
+
+        if self._head is None:
+            self._head = node
+            self._tail = node
+            self._size += 1
+            return
+
+        self._head.prev = node
+        self._head = node
+        self._size += 1
+
+    def append(self, item: T) -> DoublyNode[T]:
+        """Создает новый узел со значением и добавляет его в конец списка за O(1).
+
+        :param item: Добавляемое значение.
+        :return: Созданный узел списка.
+        """
+        node: DoublyNode[T] = DoublyNode(item)
+        self.append_node(node)
+        return node
+
+    def prepend(self, item: T) -> DoublyNode[T]:
+        """Создает новый узел со значением и добавляет его в начало списка за O(1).
+
+        :param item: Добавляемое значение.
+        :return: Созданный узел списка.
+        """
+        node: DoublyNode[T] = DoublyNode(item)
+        self.prepend_node(node)
+        return node
+
+    def popleft(self) -> T:
+        """Удаляет и возвращает первый элемент списка за O(1).
+
+        :return: Значение удаленного первого элемента.
+        :raises IndexError: Если список пуст.
+        """
+        if self._head is None:
+            raise IndexError("Невозможно извлечь элемент: список пуст")
+
+        target: DoublyNode[T] = self._head
+        self._head = target.next
+
+        if self._head is not None:
+            self._head.prev = None
+        else:
+            self._tail = None
+
+        target.prev = None
+        target.next = None
+        self._size -= 1
+        return target.value
+
+    def pop(self) -> T:
+        """Удаляет и возвращает последний элемент списка за O(1).
+
+        :return: Значение удаленного последнего элемента.
+        :raises IndexError: Если список пуст.
+        """
+        if self._tail is None:
+            raise IndexError("Невозможно извлечь элемент: список пуст")
+
+        target: DoublyNode[T] = self._tail
+        self._tail = target.prev
+
+        if self._tail is not None:
+            self._tail.next = None
+        else:
+            self._head = None
+
+        target.prev = None
+        target.next = None
+        self._size -= 1
+        return target.value
+
+    def peek_head(self) -> T:
+        """Возвращает значение первого элемента без его удаления.
+
+        :return: Значение первого узла.
+        :raises IndexError: Если список пуст.
+        """
+        if self._head is None:
+            raise IndexError("Список пуст")
+        return self._head.value
+
+    def peek_tail(self) -> T:
+        """Возвращает значение последнего элемента без его удаления.
+
+        :return: Значение последнего узла.
+        :raises IndexError: Если список пуст.
+        """
+        if self._tail is None:
+            raise IndexError("Список пуст")
+        return self._tail.value
+
+    def unlink(self, node: DoublyNode[T]) -> T:
+        """Удаляет указанный узел из списка за O(1).
+
+        :param node: Целевой узел для отсоединения.
+        :return: Значение отсоединенного узла.
+        :raises ValueError: Если список пуст или узел поврежден/не принадлежит списку.
+        """
+        if self._size == 0:
+            raise ValueError("Невозможно отсоединить узел: список пуст")
+
+        if node is self._head:
+            return self.popleft()
+
+        if node is self._tail:
+            return self.pop()
+
+        prev_node: DoublyNode[T] | None = node.prev
+        next_node: DoublyNode[T] | None = node.next
+
+        if prev_node is None or next_node is None:
+            raise ValueError("Узел не принадлежит текущему списку или уже отсоединен")
+
+        prev_node.next = next_node
+        next_node.prev = prev_node
+
+        node.prev = None
+        node.next = None
+        self._size -= 1
+        return node.value
+
+    def move_to_end(self, node: DoublyNode[T]) -> None:
+        """Перемещает существующий узел в конец списка за O(1).
+
+        :param node: Перемещаемый узел.
+        """
+        if node is self._tail:
+            return
+        self.unlink(node)
+        self.append_node(node)
+
+    def move_to_front(self, node: DoublyNode[T]) -> None:
+        """Перемещает существующий узел в начало списка за O(1).
+
+        :param node: Перемещаемый узел.
+        """
+        if node is self._head:
+            return
+        self.unlink(node)
+        self.prepend_node(node)
+
+    def remove(self, item: T) -> bool:
+        """Удаляет первое вхождение элемента по значению.
+
+        :param item: Искомое значение для удаления.
+        :return: True, если элемент найден и удален; False в противном случае.
+        """
+        for node in self.iter_nodes():
+            if node.value == item:
+                self.unlink(node)
+                return True
+        return False
+
+    def clear(self) -> None:
+        """Очищает список и разрывает связи между узлами."""
+        current: DoublyNode[T] | None = self._head
+        while current is not None:
+            next_node: DoublyNode[T] | None = current.next
+            current.prev = None
+            current.next = None
+            current = next_node
+
+        self._head = None
+        self._tail = None
+        self._size = 0
+
+    def to_list(self) -> list[T]:
+        """Возвращает элементы списка в прямом порядке (от головы к хвосту)."""
+        return list(self)
+
+    def to_reverse_list(self) -> list[T]:
+        """Возвращает элементы списка в обратном порядке (от хвоста к голове)."""
+        return list(reversed(self))
+
+    def _get_node_at(self, index: int) -> DoublyNode[T]:
+        """Возвращает узел по нормализованному индексу, оптимизируя направление обхода.
+
+        :param index: Скорректированный неотрицательный индекс.
+        :return: Целевой узел цепочки.
+        """
+        if index < self._size // 2:
+            current: DoublyNode[T] | None = self._head
+            assert current is not None
+            for _ in range(index):
+                assert current.next is not None
+                current = current.next
+            return current
+
+        current = self._tail
+        assert current is not None
+        for _ in range(self._size - 1 - index):
+            assert current.prev is not None
+            current = current.prev
+        return current
+
+    def iter_nodes(self) -> Iterator[DoublyNode[T]]:
+        """Итерирует по объектам узлов от головы к хвосту."""
+        current: DoublyNode[T] | None = self._head
+        while current is not None:
+            yield current
+            current = current.next
+
+    def iter_nodes_reversed(self) -> Iterator[DoublyNode[T]]:
+        """Итерирует по объектам узлов от хвоста к голове."""
+        current: DoublyNode[T] | None = self._tail
+        while current is not None:
+            yield current
+            current = current.prev
+
+    def __len__(self) -> int:
+        """Возвращает общее количество элементов в списке."""
+        return self._size
+
+    def __iter__(self) -> Iterator[T]:
+        """Прямой обход значений элементов списка от головы к хвосту."""
+        for node in self.iter_nodes():
+            yield node.value
+
+    def __reversed__(self) -> Iterator[T]:
+        """Обратный обход значений элементов списка от хвоста к голове."""
+        for node in self.iter_nodes_reversed():
+            yield node.value
+
+    def __contains__(self, item: object) -> bool:
+        """Проверяет наличие элемента в списке."""
+        for value in self:
+            if value == item:
+                return True
+        return False
+
+    def __getitem__(self, index: int) -> T:
+        """Возвращает элемент по индексу (поддерживает отрицательные индексы).
+
+        :param index: Индекс элемента.
+        :return: Значение узла.
+        :raises IndexError: Если индекс выходит за границы списка.
+        """
+        normalized_index: int = index if index >= 0 else index + self._size
+        if normalized_index < 0 or normalized_index >= self._size:
+            raise IndexError("Индекс выходит за границы двусвязного списка")
+
+        return self._get_node_at(normalized_index).value
+
+    def __repr__(self) -> str:
+        """Строковое представление списка."""
+        return f"DoublyLinkedList({self.to_list()!r})"
+</file>
+
+<file path="tests/test_doubly_linked_list.py">
+"""Модульные тесты для двусвязного списка DoublyLinkedList и узла DoublyNode."""
+
+import pytest
+
+from pocket_toolkit.structures.doubly_linked_list import DoublyLinkedList, DoublyNode
+
+
+def test_doubly_node_creation_and_repr() -> None:
+    """Проверка создания двусвязного узла и его строкового представления."""
+    node1: DoublyNode[int] = DoublyNode(10)
+    assert node1.value == 10
+    assert node1.prev is None
+    assert node1.next is None
+    assert repr(node1) == "DoublyNode(value=10)"
+
+    node2: DoublyNode[int] = DoublyNode(20, prev_node=node1)
+    node1.next = node2
+    assert node2.value == 20
+    assert node2.prev is node1
+    assert node1.next is node2
+
+
+def test_doubly_linked_list_init_empty() -> None:
+    """Проверка инициализации пустого двусвязного списка."""
+    lst: DoublyLinkedList[int] = DoublyLinkedList()
+    assert len(lst) == 0
+    assert lst.is_empty() is True
+    assert lst.head_node is None
+    assert lst.tail_node is None
+    assert lst.to_list() == []
+    assert lst.to_reverse_list() == []
+
+
+def test_doubly_linked_list_init_with_iterable() -> None:
+    """Проверка инициализации элементами из итерируемого объекта."""
+    lst: DoublyLinkedList[str] = DoublyLinkedList(["alpha", "beta", "gamma"])
+    assert len(lst) == 3
+    assert lst.is_empty() is False
+    assert lst.to_list() == ["alpha", "beta", "gamma"]
+    assert lst.to_reverse_list() == ["gamma", "beta", "alpha"]
+    assert lst.peek_head() == "alpha"
+    assert lst.peek_tail() == "gamma"
+
+
+def test_doubly_linked_list_append_and_prepend() -> None:
+    """Проверка добавления элементов в начало и конец двусвязного списка."""
+    lst: DoublyLinkedList[int] = DoublyLinkedList()
+
+    node1: DoublyNode[int] = lst.append(2)
+    assert len(lst) == 1
+    assert lst.head_node is node1
+    assert lst.tail_node is node1
+
+    node2: DoublyNode[int] = lst.prepend(1)
+    assert len(lst) == 2
+    assert lst.head_node is node2
+    assert lst.tail_node is node1
+    assert node2.next is node1
+    assert node1.prev is node2
+
+    node3: DoublyNode[int] = lst.append(3)
+    assert len(lst) == 3
+    assert lst.tail_node is node3
+    assert node1.next is node3
+    assert node3.prev is node1
+    assert lst.to_list() == [1, 2, 3]
+
+
+def test_doubly_linked_list_append_node_and_prepend_node() -> None:
+    """Проверка ручного присоединения узлов через append_node и prepend_node."""
+    lst: DoublyLinkedList[str] = DoublyLinkedList()
+    first_node: DoublyNode[str] = DoublyNode("center")
+    lst.append_node(first_node)
+
+    left_node: DoublyNode[str] = DoublyNode("left")
+    lst.prepend_node(left_node)
+
+    right_node: DoublyNode[str] = DoublyNode("right")
+    lst.append_node(right_node)
+
+    assert lst.to_list() == ["left", "center", "right"]
+    assert lst.head_node is left_node
+    assert lst.tail_node is right_node
+
+
+def test_doubly_linked_list_peek_empty_raises() -> None:
+    """Проверка исключений при чтении пустого списка."""
+    lst: DoublyLinkedList[float] = DoublyLinkedList()
+    with pytest.raises(IndexError, match="Список пуст"):
+        lst.peek_head()
+
+    with pytest.raises(IndexError, match="Список пуст"):
+        lst.peek_tail()
+
+
+def test_doubly_linked_list_popleft() -> None:
+    """Проверка удаления элементов из начала списка."""
+    lst: DoublyLinkedList[int] = DoublyLinkedList([100, 200, 300])
+
+    assert lst.popleft() == 100
+    assert len(lst) == 2
+    assert lst.peek_head() == 200
+    assert lst.head_node is not None and lst.head_node.prev is None
+
+    assert lst.popleft() == 200
+    assert lst.popleft() == 300
+    assert len(lst) == 0
+    assert lst.is_empty() is True
+    assert lst.head_node is None
+    assert lst.tail_node is None
+
+    with pytest.raises(IndexError, match="список пуст"):
+        lst.popleft()
+
+
+def test_doubly_linked_list_pop() -> None:
+    """Проверка удаления элементов с конца списка."""
+    lst: DoublyLinkedList[int] = DoublyLinkedList([10, 20, 30])
+
+    assert lst.pop() == 30
+    assert len(lst) == 2
+    assert lst.peek_tail() == 20
+    assert lst.tail_node is not None and lst.tail_node.next is None
+
+    assert lst.pop() == 20
+    assert lst.pop() == 10
+    assert len(lst) == 0
+    assert lst.is_empty() is True
+    assert lst.head_node is None
+    assert lst.tail_node is None
+
+    with pytest.raises(IndexError, match="список пуст"):
+        lst.pop()
+
+
+def test_doubly_linked_list_unlink_node_cases() -> None:
+    """Проверка отсоединения узлов за O(1) в различных позициях списка."""
+    lst: DoublyLinkedList[str] = DoublyLinkedList(["A", "B", "C", "D"])
+    nodes: list[DoublyNode[str]] = list(lst.iter_nodes())
+    node_a, node_b, node_c, node_d = nodes
+
+    # Удаление промежуточного узла B
+    val_b: str = lst.unlink(node_b)
+    assert val_b == "B"
+    assert len(lst) == 3
+    assert lst.to_list() == ["A", "C", "D"]
+    assert node_a.next is node_c
+    assert node_c.prev is node_a
+
+    # Удаление головы через unlink
+    val_a: str = lst.unlink(node_a)
+    assert val_a == "A"
+    assert lst.to_list() == ["C", "D"]
+    assert lst.head_node is node_c
+
+    # Удаление хвоста через unlink
+    val_d: str = lst.unlink(node_d)
+    assert val_d == "D"
+    assert lst.to_list() == ["C"]
+    assert lst.tail_node is node_c
+
+    # Удаление единственного оставшегося узла
+    val_c: str = lst.unlink(node_c)
+    assert val_c == "C"
+    assert len(lst) == 0
+    assert lst.is_empty() is True
+
+    # Попытка вызвать unlink на пустом списке
+    with pytest.raises(ValueError, match="список пуст"):
+        lst.unlink(node_a)
+
+
+def test_doubly_linked_list_unlink_invalid_node_raises() -> None:
+    """Проверка исключения при попытке unlink чужого или поврежденного узла."""
+    lst: DoublyLinkedList[int] = DoublyLinkedList([1, 2, 3])
+    foreign_node: DoublyNode[int] = DoublyNode(999)
+
+    with pytest.raises(ValueError, match="не принадлежит текущему списку"):
+        lst.unlink(foreign_node)
+
+
+def test_doubly_linked_list_move_to_end_and_front() -> None:
+    """Проверка перемещения узлов в начало и в конец за O(1)."""
+    lst: DoublyLinkedList[int] = DoublyLinkedList([1, 2, 3, 4])
+    nodes: list[DoublyNode[int]] = list(lst.iter_nodes())
+    _node_1, node_2, _node_3, node_4 = nodes
+
+    # Перемещение 2 в конец -> [1, 3, 4, 2]
+    lst.move_to_end(node_2)
+    assert lst.to_list() == [1, 3, 4, 2]
+    assert lst.tail_node is node_2
+
+    # Перемещение уже последнего узла в конец -> ничего не меняется
+    lst.move_to_end(node_2)
+    assert lst.to_list() == [1, 3, 4, 2]
+
+    # Перемещение 4 в начало -> [4, 1, 3, 2]
+    lst.move_to_front(node_4)
+    assert lst.to_list() == [4, 1, 3, 2]
+    assert lst.head_node is node_4
+
+    # Перемещение уже первого узла в начало -> ничего не меняется
+    lst.move_to_front(node_4)
+    assert lst.to_list() == [4, 1, 3, 2]
+
+
+def test_doubly_linked_list_remove() -> None:
+    """Проверка удаления элемента по значению."""
+    lst: DoublyLinkedList[int] = DoublyLinkedList([10, 20, 30, 40])
+
+    # Удаление промежуточного элемента
+    assert lst.remove(20) is True
+    assert lst.to_list() == [10, 30, 40]
+
+    # Удаление головы
+    assert lst.remove(10) is True
+    assert lst.to_list() == [30, 40]
+
+    # Удаление хвоста
+    assert lst.remove(40) is True
+    assert lst.to_list() == [30]
+
+    # Удаление отсутствующего элемента
+    assert lst.remove(999) is False
+    assert lst.to_list() == [30]
+
+    # Удаление последнего элемента
+    assert lst.remove(30) is True
+    assert len(lst) == 0
+
+    # Удаление из пустого списка
+    assert lst.remove(30) is False
+
+
+def test_doubly_linked_list_clear() -> None:
+    """Проверка полной очистки двусвязного списка."""
+    lst: DoublyLinkedList[int] = DoublyLinkedList([1, 2, 3])
+    lst.clear()
+    assert len(lst) == 0
+    assert lst.is_empty() is True
+    assert lst.head_node is None
+    assert lst.tail_node is None
+    assert lst.to_list() == []
+
+
+def test_doubly_linked_list_bidirectional_iteration() -> None:
+    """Проверка прямой и обратной итерации."""
+    items: list[str] = ["x", "y", "z"]
+    lst: DoublyLinkedList[str] = DoublyLinkedList(items)
+
+    assert list(lst) == ["x", "y", "z"]
+    assert list(reversed(lst)) == ["z", "y", "x"]
+
+    forward_nodes: list[str] = [n.value for n in lst.iter_nodes()]
+    assert forward_nodes == ["x", "y", "z"]
+
+    reverse_nodes: list[str] = [n.value for n in lst.iter_nodes_reversed()]
+    assert reverse_nodes == ["z", "y", "x"]
+
+
+def test_doubly_linked_list_contains() -> None:
+    """Проверка работы оператора `in`."""
+    lst: DoublyLinkedList[str] = DoublyLinkedList(["cat", "dog", "fox"])
+    assert "cat" in lst
+    assert "dog" in lst
+    assert "fox" in lst
+    assert "wolf" not in lst
+
+
+def test_doubly_linked_list_getitem() -> None:
+    """Проверка оптимизированного доступа по индексу (от головы и от хвоста)."""
+    lst: DoublyLinkedList[str] = DoublyLinkedList(["0", "1", "2", "3", "4"])
+
+    # Доступ через обход от головы (индексы < 5 // 2, то есть 0, 1)
+    assert lst[0] == "0"
+    assert lst[1] == "1"
+
+    # Доступ через обход от хвоста (индексы >= 2, то есть 2, 3, 4)
+    assert lst[2] == "2"
+    assert lst[3] == "3"
+    assert lst[4] == "4"
+
+    # Отрицательные индексы
+    assert lst[-1] == "4"
+    assert lst[-2] == "3"
+    assert lst[-5] == "0"
+
+    with pytest.raises(IndexError, match="Индекс выходит за границы"):
+        _ = lst[5]
+
+    with pytest.raises(IndexError, match="Индекс выходит за границы"):
+        _ = lst[-6]
+
+
+def test_doubly_linked_list_repr() -> None:
+    """Проверка строкового представления списка."""
+    empty_lst: DoublyLinkedList[int] = DoublyLinkedList()
+    assert repr(empty_lst) == "DoublyLinkedList([])"
+
+    lst: DoublyLinkedList[int] = DoublyLinkedList([10, 20])
+    assert repr(lst) == "DoublyLinkedList([10, 20])"
+</file>
 
 <file path="src/pocket_toolkit/structures/linked_list.py">
 """Реализация односвязного списка."""
@@ -295,6 +943,10 @@ class LinkedList[T]:
         return f"LinkedList({self.to_list()!r})"
 </file>
 
+<file path="src/pocket_toolkit/py.typed">
+
+</file>
+
 <file path="tests/test_linked_list.py">
 """Модульные тесты для односвязного списка LinkedList и узла Node."""
 
@@ -504,36 +1156,6 @@ def test_linked_list_repr() -> None:
 
     populated_lst: LinkedList[int] = LinkedList([1, 2, 3])
     assert repr(populated_lst) == "LinkedList([1, 2, 3])"
-</file>
-
-<file path="src/pocket_toolkit/structures/__init__.py">
-"""Модуль структур данных библиотеки pocket-toolkit."""
-
-from pocket_toolkit.structures.linked_list import LinkedList, Node
-from pocket_toolkit.structures.ring_buffer import RingBuffer
-
-__all__: list[str] = [
-    "LinkedList",
-    "Node",
-    "RingBuffer",
-]
-</file>
-
-<file path="src/pocket_toolkit/__init__.py">
-"""Pocket Toolkit — коллекция легковесных структур данных и утилит."""
-
-from pocket_toolkit.structures.linked_list import LinkedList, Node
-from pocket_toolkit.structures.ring_buffer import RingBuffer
-
-__all__: list[str] = [
-    "LinkedList",
-    "Node",
-    "RingBuffer",
-]
-</file>
-
-<file path="src/pocket_toolkit/py.typed">
-
 </file>
 
 <file path="tests/test_ring_buffer.py">
@@ -760,6 +1382,22 @@ jobs:
         run: uv run pytest
 </file>
 
+<file path="src/pocket_toolkit/structures/__init__.py">
+"""Модуль структур данных библиотеки pocket-toolkit."""
+
+from pocket_toolkit.structures.doubly_linked_list import DoublyLinkedList, DoublyNode
+from pocket_toolkit.structures.linked_list import LinkedList, Node
+from pocket_toolkit.structures.ring_buffer import RingBuffer
+
+__all__: list[str] = [
+    "DoublyLinkedList",
+    "DoublyNode",
+    "LinkedList",
+    "Node",
+    "RingBuffer",
+]
+</file>
+
 <file path="src/pocket_toolkit/structures/ring_buffer.py">
 """Реализация кольцевого буфера фиксированного размера."""
 
@@ -883,6 +1521,22 @@ class RingBuffer[T]:
         return f"RingBuffer(size={self._size}, capacity={self._capacity}, items={self.to_list()})"
 </file>
 
+<file path="src/pocket_toolkit/__init__.py">
+"""Pocket Toolkit — коллекция легковесных структур данных и утилит."""
+
+from pocket_toolkit.structures.doubly_linked_list import DoublyLinkedList, DoublyNode
+from pocket_toolkit.structures.linked_list import LinkedList, Node
+from pocket_toolkit.structures.ring_buffer import RingBuffer
+
+__all__: list[str] = [
+    "DoublyLinkedList",
+    "DoublyNode",
+    "LinkedList",
+    "Node",
+    "RingBuffer",
+]
+</file>
+
 <file path="pyproject.toml">
 [project]
 name = "pocket-toolkit"
@@ -966,7 +1620,7 @@ uv run pytest
 ## Этап 1: Структуры данных (`structures`) — Дни 1–12
 - [x] **День 1: Ring Buffer (Кольцевой буфер)** — Фиксированный кольцевой буфер `RingBuffer[T]` с поддержкой перезаписи старых элементов, итерации и проверки вместимости.
 - [x] **День 2: Singly Linked List (Односвязный список)** — Односвязный список `LinkedList[T]` с поддержкой вставки в начало/конец, удаления по значению и прямого обхода.
-- [ ] **День 3: Doubly Linked List (Двусвязный список)** — Двусвязный список `DoublyLinkedList[T]` с быстрым удалением узлов за `O(1)` и двусторонней итерацией.
+- [x] **День 3: Doubly Linked List (Двусвязный список)** — Двусвязный список `DoublyLinkedList[T]` с быстрым удалением узлов за `O(1)` и двусторонней итерацией.
 - [ ] **День 4: LRU Cache (Кэш вытеснения по давности)** — Класс `LRUCache[K, V]` с константным временем доступа `O(1)` на базе хэш-таблицы и двусвязного списка.
 - [ ] **День 5: LFU Cache (Кэш вытеснения по частоте)** — Класс `LFUCache[K, V]` с вытеснением наименее часто запрашиваемых ключей за `O(1)`.
 - [ ] **День 6: Prefix Tree / Trie (Префиксное дерево)** — Класс `Trie` для эффективного поиска по префиксу, проверки наличия слов и автодополнения.
