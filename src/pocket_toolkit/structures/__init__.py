@@ -1,5 +1,6 @@
 """Модуль структур данных библиотеки pocket-toolkit."""
 
+from pocket_toolkit.structures.disjoint_set import DisjointSet
 from pocket_toolkit.structures.doubly_linked_list import DoublyLinkedList, DoublyNode
 from pocket_toolkit.structures.lfu_cache import LFUCache
 from pocket_toolkit.structures.linked_list import LinkedList, Node
@@ -15,6 +16,7 @@ from pocket_toolkit.structures.trie import Trie, TrieNode
 
 __all__: list[str] = [
     "Comparable",
+    "DisjointSet",
     "DoublyLinkedList",
     "DoublyNode",
     "LFUCache",
