@@ -1,5 +1,6 @@
 """Pocket Toolkit — коллекция легковесных структур данных и утилит."""
 
+from pocket_toolkit.structures.bloom_filter import BloomFilter
 from pocket_toolkit.structures.bounded_deque import BoundedDeque
 from pocket_toolkit.structures.disjoint_set import DisjointSet
 from pocket_toolkit.structures.doubly_linked_list import DoublyLinkedList, DoublyNode
@@ -16,6 +17,7 @@ from pocket_toolkit.structures.ring_buffer import RingBuffer
 from pocket_toolkit.structures.trie import Trie, TrieNode
 
 __all__: list[str] = [
+    "BloomFilter",
     "BoundedDeque",
     "Comparable",
     "DisjointSet",
