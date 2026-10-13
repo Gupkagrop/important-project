@@ -14,6 +14,7 @@ from pocket_toolkit.structures.priority_queue import (
 )
 from pocket_toolkit.structures.radix_tree import RadixNode, RadixTree
 from pocket_toolkit.structures.ring_buffer import RingBuffer
+from pocket_toolkit.structures.sparse_matrix import SparseMatrix
 from pocket_toolkit.structures.trie import Trie, TrieNode
 
 __all__: list[str] = [
@@ -32,6 +33,7 @@ __all__: list[str] = [
     "RadixNode",
     "RadixTree",
     "RingBuffer",
+    "SparseMatrix",
     "Trie",
     "TrieNode",
 ]
