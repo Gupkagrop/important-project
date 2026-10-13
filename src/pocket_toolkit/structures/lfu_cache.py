@@ -341,8 +341,7 @@ class LFUCache[K, V]:
 
     def __iter__(self) -> Iterator[K]:
         """Итерирует по ключам кэша по убыванию частоты обращения."""
-        for key in self.keys():
-            yield key
+        yield from self.keys()
 
     def __repr__(self) -> str:
         """Возвращает строковое представление кэша."""
