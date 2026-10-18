@@ -1,0 +1,6 @@
+tests/**
+__tests__/**
+.venv/**
+node_modules/**
+*.log
+repomix-output.*

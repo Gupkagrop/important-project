@@ -24,3 +24,9 @@ dist/
 # Logs
 logs/
 *.log
+
+# Ephemeral artifacts & secrets
+repomix-output.*
+.env
+.env.*
+!.env.example

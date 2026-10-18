@@ -1,5 +1,13 @@
 """Pocket Toolkit — коллекция легковесных структур данных и утилит."""
 
+from pocket_toolkit.algorithms.binary_search import (
+    binary_search,
+    binary_search_last,
+    binary_search_rotated,
+    equal_range,
+    lower_bound,
+    upper_bound,
+)
 from pocket_toolkit.structures.bloom_filter import BloomFilter
 from pocket_toolkit.structures.bounded_deque import BoundedDeque
 from pocket_toolkit.structures.disjoint_set import DisjointSet
@@ -36,5 +44,10 @@ __all__: list[str] = [
     "SparseMatrix",
     "Trie",
     "TrieNode",
+    "binary_search",
+    "binary_search_last",
+    "binary_search_rotated",
+    "equal_range",
+    "lower_bound",
+    "upper_bound",
 ]
-
