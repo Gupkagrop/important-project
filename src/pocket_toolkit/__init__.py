@@ -18,6 +18,19 @@ from pocket_toolkit.algorithms.levenshtein import (
     levenshtein_matrix,
     levenshtein_similarity,
 )
+from pocket_toolkit.algorithms.rle import (
+    RLERun,
+    calculate_compression_ratio,
+    calculate_space_saving,
+    rle_decode,
+    rle_decode_bytes,
+    rle_decode_iter,
+    rle_decode_str,
+    rle_encode,
+    rle_encode_bytes,
+    rle_encode_iter,
+    rle_encode_str,
+)
 from pocket_toolkit.structures.bloom_filter import BloomFilter
 from pocket_toolkit.structures.bounded_deque import BoundedDeque
 from pocket_toolkit.structures.disjoint_set import DisjointSet
@@ -50,6 +63,7 @@ __all__: list[str] = [
     "Node",
     "PriorityItem",
     "PriorityQueue",
+    "RLERun",
     "RadixNode",
     "RadixTree",
     "RingBuffer",
@@ -59,6 +73,8 @@ __all__: list[str] = [
     "binary_search",
     "binary_search_last",
     "binary_search_rotated",
+    "calculate_compression_ratio",
+    "calculate_space_saving",
     "damerau_levenshtein_distance",
     "equal_range",
     "find_closest_matches",
@@ -67,5 +83,13 @@ __all__: list[str] = [
     "levenshtein_matrix",
     "levenshtein_similarity",
     "lower_bound",
+    "rle_decode",
+    "rle_decode_bytes",
+    "rle_decode_iter",
+    "rle_decode_str",
+    "rle_encode",
+    "rle_encode_bytes",
+    "rle_encode_iter",
+    "rle_encode_str",
     "upper_bound",
 ]
