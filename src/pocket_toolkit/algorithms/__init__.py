@@ -39,6 +39,10 @@ from pocket_toolkit.algorithms.rle import (
     rle_encode_iter,
     rle_encode_str,
 )
+from pocket_toolkit.algorithms.sliding_window import (
+    SlidingWindowAggregator,
+    sliding_window_extrema,
+)
 from pocket_toolkit.algorithms.topological_sort import (
     CyclicDependencyError,
     calculate_in_degrees,
@@ -54,6 +58,7 @@ __all__: list[str] = [
     "EditOperation",
     "Interval",
     "RLERun",
+    "SlidingWindowAggregator",
     "binary_search",
     "binary_search_last",
     "binary_search_rotated",
@@ -81,6 +86,7 @@ __all__: list[str] = [
     "rle_encode_bytes",
     "rle_encode_iter",
     "rle_encode_str",
+    "sliding_window_extrema",
     "topological_sort",
     "topological_sort_dfs",
     "upper_bound",
