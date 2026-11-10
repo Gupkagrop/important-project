@@ -94,6 +94,11 @@ from pocket_toolkit.algorithms.topological_sort import (
     topological_sort,
     topological_sort_dfs,
 )
+from pocket_toolkit.decorators.circuit_breaker import (
+    CircuitBreaker,
+    CircuitBreakerOpenError,
+    CircuitState,
+)
 from pocket_toolkit.decorators.leaky_bucket import (
     LeakyBucket,
     LeakyBucketOverflowError,
@@ -135,6 +140,9 @@ __all__: list[str] = [
     "BloomFilter",
     "BoundedDeque",
     "CacheInfo",
+    "CircuitBreaker",
+    "CircuitBreakerOpenError",
+    "CircuitState",
     "Comparable",
     "CyclicDependencyError",
     "DisjointSet",

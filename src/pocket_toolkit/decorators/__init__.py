@@ -1,5 +1,10 @@
 """Пакет декораторов и функциональных оберток Pocket Toolkit."""
 
+from pocket_toolkit.decorators.circuit_breaker import (
+    CircuitBreaker,
+    CircuitBreakerOpenError,
+    CircuitState,
+)
 from pocket_toolkit.decorators.leaky_bucket import (
     LeakyBucket,
     LeakyBucketOverflowError,
@@ -22,6 +27,9 @@ from pocket_toolkit.decorators.timed_cache import (
 
 __all__: list[str] = [
     "CacheInfo",
+    "CircuitBreaker",
+    "CircuitBreakerOpenError",
+    "CircuitState",
     "LeakyBucket",
     "LeakyBucketOverflowError",
     "RateLimitExceededError",
