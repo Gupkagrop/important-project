@@ -127,6 +127,11 @@ from pocket_toolkit.functional.compose import (
     compose_left,
     pipe,
 )
+from pocket_toolkit.functional.curry import (
+    Curried,
+    curry,
+    uncurry,
+)
 from pocket_toolkit.structures.bloom_filter import BloomFilter
 from pocket_toolkit.structures.bounded_deque import BoundedDeque
 from pocket_toolkit.structures.disjoint_set import DisjointSet
@@ -153,6 +158,7 @@ __all__: list[str] = [
     "CircuitBreakerOpenError",
     "CircuitState",
     "Comparable",
+    "Curried",
     "CyclicDependencyError",
     "DisjointSet",
     "DoublyLinkedList",
@@ -196,6 +202,7 @@ __all__: list[str] = [
     "compute_prefix_function",
     "crc32",
     "crc32_hex",
+    "curry",
     "damerau_levenshtein_distance",
     "debounce",
     "dijkstra",
@@ -252,6 +259,7 @@ __all__: list[str] = [
     "timed_cache",
     "topological_sort",
     "topological_sort_dfs",
+    "uncurry",
     "upper_bound",
     "weighted_reservoir_sample",
 ]
