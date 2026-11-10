@@ -94,6 +94,11 @@ from pocket_toolkit.algorithms.topological_sort import (
     topological_sort,
     topological_sort_dfs,
 )
+from pocket_toolkit.decorators.retry import (
+    RetryExhaustedError,
+    calculate_backoff_delay,
+    retry,
+)
 from pocket_toolkit.structures.bloom_filter import BloomFilter
 from pocket_toolkit.structures.bounded_deque import BoundedDeque
 from pocket_toolkit.structures.disjoint_set import DisjointSet
@@ -133,6 +138,7 @@ __all__: list[str] = [
     "RLERun",
     "RadixNode",
     "RadixTree",
+    "RetryExhaustedError",
     "RingBuffer",
     "ShortestPathResult",
     "SlidingWindowAggregator",
@@ -142,6 +148,7 @@ __all__: list[str] = [
     "binary_search",
     "binary_search_last",
     "binary_search_rotated",
+    "calculate_backoff_delay",
     "calculate_compression_ratio",
     "calculate_in_degrees",
     "calculate_space_saving",
@@ -186,6 +193,7 @@ __all__: list[str] = [
     "mod_sub",
     "modular_inverse",
     "reservoir_sample",
+    "retry",
     "rle_decode",
     "rle_decode_bytes",
     "rle_decode_iter",
