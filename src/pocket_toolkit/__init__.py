@@ -109,6 +109,10 @@ from pocket_toolkit.decorators.retry import (
     calculate_backoff_delay,
     retry,
 )
+from pocket_toolkit.decorators.timed_cache import (
+    CacheInfo,
+    timed_cache,
+)
 from pocket_toolkit.structures.bloom_filter import BloomFilter
 from pocket_toolkit.structures.bounded_deque import BoundedDeque
 from pocket_toolkit.structures.disjoint_set import DisjointSet
@@ -130,6 +134,7 @@ __all__: list[str] = [
     "AlignmentStep",
     "BloomFilter",
     "BoundedDeque",
+    "CacheInfo",
     "Comparable",
     "CyclicDependencyError",
     "DisjointSet",
@@ -220,6 +225,7 @@ __all__: list[str] = [
     "rle_encode_str",
     "shuffled",
     "sliding_window_extrema",
+    "timed_cache",
     "topological_sort",
     "topological_sort_dfs",
     "upper_bound",

@@ -15,8 +15,13 @@ from pocket_toolkit.decorators.retry import (
     calculate_backoff_delay,
     retry,
 )
+from pocket_toolkit.decorators.timed_cache import (
+    CacheInfo,
+    timed_cache,
+)
 
 __all__: list[str] = [
+    "CacheInfo",
     "LeakyBucket",
     "LeakyBucketOverflowError",
     "RateLimitExceededError",
@@ -26,4 +31,5 @@ __all__: list[str] = [
     "leaky_bucket_limit",
     "rate_limit",
     "retry",
+    "timed_cache",
 ]
