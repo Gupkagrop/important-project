@@ -9,6 +9,11 @@ from pocket_toolkit.algorithms.binary_search import (
     lower_bound,
     upper_bound,
 )
+from pocket_toolkit.algorithms.dijkstra import (
+    ShortestPathResult,
+    dijkstra,
+    find_shortest_path,
+)
 from pocket_toolkit.algorithms.huffman import (
     HuffmanNode,
     HuffmanTree,
@@ -74,6 +79,7 @@ __all__: list[str] = [
     "HuffmanTree",
     "Interval",
     "RLERun",
+    "ShortestPathResult",
     "SlidingWindowAggregator",
     "binary_search",
     "binary_search_last",
@@ -84,8 +90,10 @@ __all__: list[str] = [
     "common_intersection",
     "compute_prefix_function",
     "damerau_levenshtein_distance",
+    "dijkstra",
     "equal_range",
     "find_closest_matches",
+    "find_shortest_path",
     "huffman_decode",
     "huffman_encode",
     "insert_interval",
