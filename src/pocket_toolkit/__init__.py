@@ -15,6 +15,14 @@ from pocket_toolkit.algorithms.intervals import (
     intersect_interval_lists,
     merge_intervals,
 )
+from pocket_toolkit.algorithms.kmp import (
+    compute_prefix_function,
+    kmp_count,
+    kmp_find_first,
+    kmp_search,
+    kmp_search_iter,
+    kmp_search_sequence,
+)
 from pocket_toolkit.algorithms.levenshtein import (
     AlignmentStep,
     EditOperation,
@@ -98,12 +106,18 @@ __all__: list[str] = [
     "calculate_in_degrees",
     "calculate_space_saving",
     "common_intersection",
+    "compute_prefix_function",
     "damerau_levenshtein_distance",
     "equal_range",
     "find_closest_matches",
     "insert_interval",
     "intersect_interval_lists",
     "is_dag",
+    "kmp_count",
+    "kmp_find_first",
+    "kmp_search",
+    "kmp_search_iter",
+    "kmp_search_sequence",
     "levenshtein_alignment",
     "levenshtein_distance",
     "levenshtein_matrix",
