@@ -5,11 +5,11 @@
 с поддержкой экспоненциального восстановления, фоллбэков и потокобезопасности.
 """
 
-from collections.abc import Callable
-from enum import Enum
 import functools
 import threading
 import time
+from collections.abc import Callable
+from enum import Enum
 from typing import ParamSpec, TypeVar
 
 P = ParamSpec("P")
@@ -167,11 +167,11 @@ class CircuitBreaker:
 
         try:
             result = func(*args, **kwargs)
-        except self._exceptions as exc:
+        except self._exceptions:
             self._handle_failure()
             if self._fallback is not None:
                 return self._fallback(*args, **kwargs)  # type: ignore[return-value]
-            raise exc
+            raise
 
         self._handle_success()
         return result

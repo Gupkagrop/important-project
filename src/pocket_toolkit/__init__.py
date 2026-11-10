@@ -180,6 +180,7 @@ from pocket_toolkit.structures.sparse_matrix import SparseMatrix
 from pocket_toolkit.structures.trie import Trie, TrieNode
 
 __all__: list[str] = [
+    "DELETE_FIELD",
     "AlignmentStep",
     "BloomFilter",
     "BoundedDeque",
@@ -190,7 +191,6 @@ __all__: list[str] = [
     "Comparable",
     "Curried",
     "CyclicDependencyError",
-    "DELETE_FIELD",
     "DisjointSet",
     "DoublyLinkedList",
     "DoublyNode",

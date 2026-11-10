@@ -1,9 +1,10 @@
 """Модульные тесты для алгоритма Дейкстры (dijkstra)."""
 
 import math
+
 import pytest
+
 from pocket_toolkit.algorithms.dijkstra import (
-    ShortestPathResult,
     dijkstra,
     find_shortest_path,
 )

@@ -6,7 +6,7 @@
 """
 
 from collections import deque
-from collections.abc import Hashable, Iterable, Iterator, Mapping, Sequence
+from collections.abc import Hashable, Iterable, Mapping, Sequence
 from typing import TypeVar
 
 T = TypeVar("T", bound=Hashable)

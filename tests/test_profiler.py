@@ -1,6 +1,7 @@
 """Модульные тесты для декоратора профилирования profile_time."""
 
 import pytest
+
 from pocket_toolkit.decorators.profiler import ProfileStats, profile_time
 
 

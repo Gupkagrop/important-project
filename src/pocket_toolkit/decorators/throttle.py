@@ -5,10 +5,10 @@
 начальным (`leading`) и завершающим (`trailing`).
 """
 
-from collections.abc import Callable
 import functools
 import threading
 import time
+from collections.abc import Callable
 from typing import ParamSpec, TypeVar
 
 P = ParamSpec("P")
@@ -110,8 +110,8 @@ def throttle(
             last_result = func(*args, **kwargs)  # type: ignore[arg-type]
             return last_result
 
-        setattr(wrapper, "cancel", cancel)
-        setattr(wrapper, "flush", flush)
+        wrapper.cancel = cancel
+        wrapper.flush = flush
 
         return wrapper
 

@@ -6,7 +6,6 @@
 """
 
 from collections.abc import Callable
-import functools
 from typing import ParamSpec, TypeVar
 
 T = TypeVar("T")

@@ -1,6 +1,7 @@
 """Модульные тесты для модуля ограничения частоты вызовов (rate_limiter)."""
 
 import pytest
+
 from pocket_toolkit.decorators.rate_limiter import (
     RateLimitExceededError,
     TokenBucket,

@@ -1,7 +1,9 @@
 """Модульные тесты для декоратора timed_cache."""
 
 from typing import Any
+
 import pytest
+
 from pocket_toolkit.decorators.timed_cache import CacheInfo, timed_cache
 
 

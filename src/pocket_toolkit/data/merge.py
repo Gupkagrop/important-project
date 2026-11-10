@@ -5,8 +5,8 @@
 а также функцию `deep_patch` для применения JSON-like дельта-патчей (RFC 7396).
 """
 
-from collections.abc import Mapping, Sequence
 import copy
+from collections.abc import Mapping
 from typing import Any
 
 # Специальный объект-маркер для явного удаления ключей в deep_patch

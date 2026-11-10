@@ -1,6 +1,7 @@
 """Модульные тесты для модуля некриптографического хеширования (hashing)."""
 
 import binascii
+
 from pocket_toolkit.algorithms.hashing import (
     crc32,
     crc32_hex,

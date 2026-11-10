@@ -2,7 +2,9 @@
 
 import time
 from typing import Any
+
 import pytest
+
 from pocket_toolkit.decorators.debounce import debounce
 
 

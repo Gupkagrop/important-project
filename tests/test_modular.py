@@ -1,6 +1,7 @@
 """Модульные тесты для модуля модулярной арифметики (modular)."""
 
 import pytest
+
 from pocket_toolkit.algorithms.modular import (
     chinese_remainder_theorem,
     extended_gcd,

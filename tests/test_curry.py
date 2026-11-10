@@ -1,6 +1,7 @@
 """Модульные тесты для модуля каррирования функций (curry)."""
 
 import pytest
+
 from pocket_toolkit.functional.curry import Curried, curry, uncurry
 
 

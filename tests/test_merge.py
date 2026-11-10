@@ -1,6 +1,7 @@
 """Модульные тесты для модуля глубокого слияния и патчинга (merge)."""
 
 import pytest
+
 from pocket_toolkit.data.merge import DELETE_FIELD, deep_merge, deep_patch
 
 

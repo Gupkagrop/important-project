@@ -5,10 +5,10 @@
 режима мгновенного сброса (overflow) и режима сглаживания/ожидания.
 """
 
-from collections.abc import Callable, Hashable
 import functools
 import threading
 import time
+from collections.abc import Callable, Hashable
 from typing import ParamSpec, TypeVar
 
 P = ParamSpec("P")

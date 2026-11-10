@@ -1,6 +1,7 @@
 """Модульные тесты для модуля работы с интервалами (intervals)."""
 
 import pytest
+
 from pocket_toolkit.algorithms.intervals import (
     Interval,
     common_intersection,

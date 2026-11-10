@@ -39,9 +39,7 @@ class Interval[T: Comparable]:
         """
         if point < self.start:
             return False
-        if self.end < point:
-            return False
-        return True
+        return not (self.end < point)
 
     def contains_interval(self, other: "Interval[T]") -> bool:
         """Проверяет, полностью ли текущий интервал содержит другой интервал.
@@ -51,9 +49,7 @@ class Interval[T: Comparable]:
         """
         if other.start < self.start:
             return False
-        if self.end < other.end:
-            return False
-        return True
+        return not (self.end < other.end)
 
     def overlaps(self, other: "Interval[T]") -> bool:
         """Проверяет наличие непустого пересечения с другим отрезком.
@@ -63,9 +59,7 @@ class Interval[T: Comparable]:
         """
         if self.end < other.start:
             return False
-        if other.end < self.start:
-            return False
-        return True
+        return not (other.end < self.start)
 
     def intersection(self, other: "Interval[T]") -> "Interval[T] | None":
         """Находит пересечение текущего интервала с другим интервалом.
@@ -77,9 +71,9 @@ class Interval[T: Comparable]:
             return None
 
         # max(self.start, other.start)
-        new_start: T = other.start if self.start < other.start else self.start
+        new_start: T = max(self.start, other.start)
         # min(self.end, other.end)
-        new_end: T = self.end if self.end < other.end else other.end
+        new_end: T = min(other.end, self.end)
 
         return Interval(start=new_start, end=new_end)
 
@@ -110,7 +104,7 @@ def merge_intervals[T: Comparable](intervals: Iterable[Interval[T]]) -> list[Int
         last: Interval[T] = merged[-1]
         if current.start < last.end or current.start == last.end:
             # Интервалы пересекаются или касаются: расширяем правый конец
-            new_end: T = current.end if last.end < current.end else last.end
+            new_end: T = max(last.end, current.end)
             merged[-1] = Interval(start=last.start, end=new_end)
         else:
             merged.append(current)
@@ -144,10 +138,8 @@ def insert_interval[T: Comparable](
     cur_end: T = new_interval.end
 
     while i < total and not (cur_end < intervals[i].start):
-        if intervals[i].start < cur_start:
-            cur_start = intervals[i].start
-        if cur_end < intervals[i].end:
-            cur_end = intervals[i].end
+        cur_start = min(cur_start, intervals[i].start)
+        cur_end = max(cur_end, intervals[i].end)
         i += 1
 
     result.append(Interval(start=cur_start, end=cur_end))

@@ -2,7 +2,9 @@
 
 import math
 import statistics
+
 import pytest
+
 from pocket_toolkit.algorithms.sliding_window import (
     SlidingWindowAggregator,
     sliding_window_extrema,

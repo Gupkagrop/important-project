@@ -5,10 +5,10 @@
 с поддержкой принудительного сброса (`flush`), отмены (`cancel`) и предельного времени ожидания (`max_wait`).
 """
 
-from collections.abc import Callable
 import functools
 import threading
 import time
+from collections.abc import Callable
 from typing import ParamSpec, TypeVar
 
 P = ParamSpec("P")
@@ -116,9 +116,9 @@ def debounce(
             with lock:
                 return timer is not None
 
-        setattr(wrapper, "cancel", cancel)
-        setattr(wrapper, "flush", flush)
-        setattr(wrapper, "is_pending", is_pending)
+        wrapper.cancel = cancel
+        wrapper.flush = flush
+        wrapper.is_pending = is_pending
 
         return wrapper
 

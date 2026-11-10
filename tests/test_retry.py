@@ -1,7 +1,9 @@
 """Модульные тесты для декоратора повторных попыток (retry)."""
 
 import random
+
 import pytest
+
 from pocket_toolkit.decorators.retry import (
     RetryExhaustedError,
     calculate_backoff_delay,

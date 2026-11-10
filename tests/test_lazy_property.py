@@ -1,7 +1,5 @@
 """Модульные тесты для дескриптора lazy_property."""
 
-from typing import Any
-import pytest
 from pocket_toolkit.decorators.lazy_property import lazy_property
 
 

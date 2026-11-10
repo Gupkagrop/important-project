@@ -5,10 +5,10 @@
 ожидания доступности токенов (blocking) и раздельного лимитирования по ключам (key_func).
 """
 
-from collections.abc import Callable, Hashable
 import functools
 import threading
 import time
+from collections.abc import Callable, Hashable
 from typing import ParamSpec, TypeVar
 
 P = ParamSpec("P")

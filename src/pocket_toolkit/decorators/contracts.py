@@ -5,11 +5,11 @@
 аргументов и возвращаемых значений во время выполнения.
 """
 
-from collections.abc import Callable
 import functools
 import inspect
-from typing import Any, ParamSpec, TypeVar, get_args, get_origin
 import warnings
+from collections.abc import Callable
+from typing import Any, ParamSpec, TypeVar, get_args, get_origin
 
 P = ParamSpec("P")
 R = TypeVar("R")

@@ -5,12 +5,12 @@
 потокобезопасностью и сбором статистики попаданий и промахов.
 """
 
-from collections import OrderedDict
-from collections.abc import Callable, Hashable
-from dataclasses import dataclass
 import functools
 import threading
 import time
+from collections import OrderedDict
+from collections.abc import Callable, Hashable
+from dataclasses import dataclass
 from typing import ParamSpec, TypeVar
 
 P = ParamSpec("P")
@@ -146,9 +146,9 @@ def timed_cache(
             return evicted
 
         # Добавляем служебные методы к функции
-        setattr(wrapper, "cache_info", cache_info)
-        setattr(wrapper, "cache_clear", cache_clear)
-        setattr(wrapper, "cache_evict_expired", cache_evict_expired)
+        wrapper.cache_info = cache_info
+        wrapper.cache_clear = cache_clear
+        wrapper.cache_evict_expired = cache_evict_expired
 
         return wrapper
 

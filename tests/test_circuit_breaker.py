@@ -1,6 +1,7 @@
 """Модульные тесты для паттерна CircuitBreaker."""
 
 import pytest
+
 from pocket_toolkit.decorators.circuit_breaker import (
     CircuitBreaker,
     CircuitBreakerOpenError,

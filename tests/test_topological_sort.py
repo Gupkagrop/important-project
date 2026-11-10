@@ -1,6 +1,7 @@
 """Модульные тесты для модуля топологической сортировки (topological_sort)."""
 
 import pytest
+
 from pocket_toolkit.algorithms.topological_sort import (
     CyclicDependencyError,
     calculate_in_degrees,

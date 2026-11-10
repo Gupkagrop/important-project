@@ -6,8 +6,8 @@
 и базовых операций модулярной арифметики.
 """
 
-from collections.abc import Sequence
 import math
+from collections.abc import Sequence
 
 
 def fast_power(base: int, exp: int, modulus: int | None = None) -> int:

@@ -1,6 +1,7 @@
 """Модульные тесты для модуля алгоритма «протекающее ведро» (leaky_bucket)."""
 
 import pytest
+
 from pocket_toolkit.decorators.leaky_bucket import (
     LeakyBucket,
     LeakyBucketOverflowError,

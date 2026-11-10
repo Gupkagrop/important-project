@@ -5,11 +5,11 @@
 (общее число вызовов, суммарное, среднее, минимальное и максимальное время).
 """
 
-from collections.abc import Callable
-from dataclasses import dataclass
 import functools
 import threading
 import time
+from collections.abc import Callable
+from dataclasses import dataclass
 from typing import ParamSpec, TypeVar
 
 P = ParamSpec("P")
@@ -68,10 +68,8 @@ def profile_time(
                 with lock:
                     total_calls += 1
                     total_time += elapsed
-                    if elapsed < min_time:
-                        min_time = elapsed
-                    if elapsed > max_time:
-                        max_time = elapsed
+                    min_time = min(min_time, elapsed)
+                    max_time = max(max_time, elapsed)
 
                 if logger is not None:
                     logger(f"[{tag}] выполнена за {elapsed:.6f} сек.")
@@ -95,9 +93,9 @@ def profile_time(
                 min_time = float("inf")
                 max_time = 0.0
 
-        setattr(wrapper, "stats", property(lambda self: get_stats()) if False else get_stats)
-        setattr(wrapper, "get_stats", get_stats)
-        setattr(wrapper, "reset_stats", reset_stats)
+        wrapper.stats = property(lambda self: get_stats()) if False else get_stats
+        wrapper.get_stats = get_stats
+        wrapper.reset_stats = reset_stats
 
         return wrapper
 

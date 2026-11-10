@@ -1,7 +1,9 @@
 """Модульные тесты для модуля контрактов и депрекации (contracts)."""
 
 import warnings
+
 import pytest
+
 from pocket_toolkit.decorators.contracts import deprecated, validate_types
 
 

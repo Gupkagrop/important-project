@@ -1,8 +1,10 @@
 """Модульные тесты для модуля алгоритмов выборки и тасования (sampling)."""
 
-from collections import Counter
 import random
+from collections import Counter
+
 import pytest
+
 from pocket_toolkit.algorithms.sampling import (
     fisher_yates_shuffle,
     reservoir_sample,

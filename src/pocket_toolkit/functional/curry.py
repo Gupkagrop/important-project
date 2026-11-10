@@ -5,10 +5,8 @@
 а также обратную утилиту `uncurry`.
 """
 
-from collections.abc import Callable
-import functools
 import inspect
-from typing import Any
+from collections.abc import Callable
 
 
 def _get_required_arity(func: Callable[..., object]) -> int:
@@ -16,12 +14,15 @@ def _get_required_arity(func: Callable[..., object]) -> int:
     sig = inspect.signature(func)
     arity = 0
     for param in sig.parameters.values():
-        if param.kind in (
-            inspect.Parameter.POSITIONAL_ONLY,
-            inspect.Parameter.POSITIONAL_OR_KEYWORD,
+        if (
+            param.kind
+            in (
+                inspect.Parameter.POSITIONAL_ONLY,
+                inspect.Parameter.POSITIONAL_OR_KEYWORD,
+            )
+            and param.default is inspect.Parameter.empty
         ):
-            if param.default is inspect.Parameter.empty:
-                arity += 1
+            arity += 1
     return arity
 
 

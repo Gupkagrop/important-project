@@ -6,9 +6,9 @@
 а также вспомогательные функции вычисления скользящих экстремумов.
 """
 
+import math
 from collections import deque
 from collections.abc import Iterable, Iterator, Sequence
-import math
 
 
 class SlidingWindowAggregator:
@@ -67,7 +67,7 @@ class SlidingWindowAggregator:
         """Проверяет, пусто ли окно."""
         return len(self._data) == 0
 
-    def append(self, value: float | int) -> None:
+    def append(self, value: float) -> None:
         """Добавляет новое значение в скользящее окно.
 
         Если окно уже заполнено, старейший элемент автоматически выталкивается.

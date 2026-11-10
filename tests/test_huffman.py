@@ -1,6 +1,7 @@
 """Модульные тесты для модуля сжатия методом Хаффмана (huffman)."""
 
 import pytest
+
 from pocket_toolkit.algorithms.huffman import (
     HuffmanNode,
     HuffmanTree,

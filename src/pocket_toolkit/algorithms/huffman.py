@@ -5,9 +5,9 @@
 в битовые последовательности и упакованные байтовые массивы.
 """
 
+import heapq
 from collections import Counter
 from collections.abc import Mapping
-import heapq
 
 
 class HuffmanNode:

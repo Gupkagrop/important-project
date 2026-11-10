@@ -1,6 +1,7 @@
 """Модульные тесты для утилит pipe, compose и Pipeline."""
 
 import pytest
+
 from pocket_toolkit.functional.compose import (
     Pipeline,
     compose,

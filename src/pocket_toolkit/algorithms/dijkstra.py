@@ -6,10 +6,10 @@
 а также вспомогательные функции прямого поиска пути между двумя вершинами.
 """
 
-from collections.abc import Hashable, Iterable, Mapping
-from dataclasses import dataclass
 import heapq
 import math
+from collections.abc import Hashable, Iterable, Mapping
+from dataclasses import dataclass
 from typing import TypeVar
 
 T = TypeVar("T", bound=Hashable)

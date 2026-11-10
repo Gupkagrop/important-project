@@ -4,10 +4,10 @@
 рандомизированного джиттера (jitter), фильтрации типов исключений и коллбэков оповещения.
 """
 
-from collections.abc import Callable
 import functools
 import random
 import time
+from collections.abc import Callable
 from typing import ParamSpec, TypeVar
 
 P = ParamSpec("P")

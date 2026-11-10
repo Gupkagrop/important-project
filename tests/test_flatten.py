@@ -1,7 +1,7 @@
 """Модульные тесты для модуля уплощения словарей (flatten)."""
 
-from typing import Any
 import pytest
+
 from pocket_toolkit.data.flatten import flatten_dict, unflatten_dict
 
 

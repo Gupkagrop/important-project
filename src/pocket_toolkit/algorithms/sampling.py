@@ -5,10 +5,10 @@
 а также несмещенное тасование массива по схеме Фишера — Йетса (Дуршенфельда).
 """
 
-from collections.abc import Iterable, Sequence
 import heapq
 import math
 import random
+from collections.abc import Iterable, Sequence
 
 
 def reservoir_sample[T](
@@ -114,9 +114,8 @@ def weighted_reservoir_sample[T](
     rand = rng or random
     # Минимальная куча размера k: (ключ, порядковый_номер, элемент)
     heap: list[tuple[float, int, T]] = []
-    counter: int = 0
 
-    for item, weight in stream:
+    for counter, (item, weight) in enumerate(stream):
         if weight <= 0:
             raise ValueError(f"Вес элемента должен быть строго положительным (> 0), получено: {weight}")
 
@@ -131,6 +130,5 @@ def weighted_reservoir_sample[T](
             heapq.heappush(heap, (key, counter, item))
         elif key > heap[0][0]:
             heapq.heapreplace(heap, (key, counter, item))
-        counter += 1
 
     return [node[2] for node in heap]

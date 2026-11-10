@@ -5,15 +5,12 @@
 потокобезопасности, сброса значения (`del obj.prop`) и совместимости со слотами (`__slots__`).
 """
 
-from collections.abc import Callable
 import threading
-from typing import Any, Generic, TypeVar, overload
-
-T = TypeVar("T")
-R = TypeVar("R")
+from collections.abc import Callable
+from typing import overload
 
 
-class lazy_property(Generic[T, R]):
+class lazy_property[T, R]:
     """Дескриптор лениво вычисляемого свойства класса.
 
     Вычисляет значение свойства только при первом обращении к нему через экземпляр,
