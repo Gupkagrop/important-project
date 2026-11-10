@@ -98,6 +98,11 @@ from pocket_toolkit.data.flatten import (
     flatten_dict,
     unflatten_dict,
 )
+from pocket_toolkit.data.merge import (
+    DELETE_FIELD,
+    deep_merge,
+    deep_patch,
+)
 from pocket_toolkit.decorators.circuit_breaker import (
     CircuitBreaker,
     CircuitBreakerOpenError,
@@ -185,6 +190,7 @@ __all__: list[str] = [
     "Comparable",
     "Curried",
     "CyclicDependencyError",
+    "DELETE_FIELD",
     "DisjointSet",
     "DoublyLinkedList",
     "DoublyNode",
@@ -231,6 +237,8 @@ __all__: list[str] = [
     "curry",
     "damerau_levenshtein_distance",
     "debounce",
+    "deep_merge",
+    "deep_patch",
     "deprecated",
     "dijkstra",
     "equal_range",
