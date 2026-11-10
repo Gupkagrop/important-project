@@ -140,6 +140,10 @@ from pocket_toolkit.functional.curry import (
     curry,
     uncurry,
 )
+from pocket_toolkit.strings.slugify import (
+    slugify,
+    transliterate,
+)
 from pocket_toolkit.structures.bloom_filter import BloomFilter
 from pocket_toolkit.structures.bounded_deque import BoundedDeque
 from pocket_toolkit.structures.disjoint_set import DisjointSet
@@ -266,10 +270,12 @@ __all__: list[str] = [
     "rle_encode_str",
     "shuffled",
     "sliding_window_extrema",
+    "slugify",
     "throttle",
     "timed_cache",
     "topological_sort",
     "topological_sort_dfs",
+    "transliterate",
     "uncurry",
     "upper_bound",
     "validate_types",
