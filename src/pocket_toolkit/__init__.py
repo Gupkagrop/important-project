@@ -120,6 +120,12 @@ from pocket_toolkit.decorators.timed_cache import (
     CacheInfo,
     timed_cache,
 )
+from pocket_toolkit.functional.compose import (
+    Pipeline,
+    compose,
+    compose_left,
+    pipe,
+)
 from pocket_toolkit.structures.bloom_filter import BloomFilter
 from pocket_toolkit.structures.bounded_deque import BoundedDeque
 from pocket_toolkit.structures.disjoint_set import DisjointSet
@@ -160,6 +166,7 @@ __all__: list[str] = [
     "LeakyBucketOverflowError",
     "LinkedList",
     "Node",
+    "Pipeline",
     "PriorityItem",
     "PriorityQueue",
     "RLERun",
@@ -183,6 +190,8 @@ __all__: list[str] = [
     "calculate_space_saving",
     "chinese_remainder_theorem",
     "common_intersection",
+    "compose",
+    "compose_left",
     "compute_prefix_function",
     "crc32",
     "crc32_hex",
@@ -223,6 +232,7 @@ __all__: list[str] = [
     "mod_mul",
     "mod_sub",
     "modular_inverse",
+    "pipe",
     "rate_limit",
     "reservoir_sample",
     "retry",
