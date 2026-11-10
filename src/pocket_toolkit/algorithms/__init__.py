@@ -9,6 +9,12 @@ from pocket_toolkit.algorithms.binary_search import (
     lower_bound,
     upper_bound,
 )
+from pocket_toolkit.algorithms.huffman import (
+    HuffmanNode,
+    HuffmanTree,
+    huffman_decode,
+    huffman_encode,
+)
 from pocket_toolkit.algorithms.intervals import (
     Interval,
     common_intersection,
@@ -64,6 +70,8 @@ __all__: list[str] = [
     "Comparable",
     "CyclicDependencyError",
     "EditOperation",
+    "HuffmanNode",
+    "HuffmanTree",
     "Interval",
     "RLERun",
     "SlidingWindowAggregator",
@@ -78,6 +86,8 @@ __all__: list[str] = [
     "damerau_levenshtein_distance",
     "equal_range",
     "find_closest_matches",
+    "huffman_decode",
+    "huffman_encode",
     "insert_interval",
     "intersect_interval_lists",
     "is_dag",
