@@ -94,6 +94,11 @@ from pocket_toolkit.algorithms.topological_sort import (
     topological_sort,
     topological_sort_dfs,
 )
+from pocket_toolkit.decorators.leaky_bucket import (
+    LeakyBucket,
+    LeakyBucketOverflowError,
+    leaky_bucket_limit,
+)
 from pocket_toolkit.decorators.rate_limiter import (
     RateLimitExceededError,
     TokenBucket,
@@ -136,6 +141,8 @@ __all__: list[str] = [
     "Interval",
     "LFUCache",
     "LRUCache",
+    "LeakyBucket",
+    "LeakyBucketOverflowError",
     "LinkedList",
     "Node",
     "PriorityItem",
@@ -188,6 +195,7 @@ __all__: list[str] = [
     "kmp_search",
     "kmp_search_iter",
     "kmp_search_sequence",
+    "leaky_bucket_limit",
     "levenshtein_alignment",
     "levenshtein_distance",
     "levenshtein_matrix",
