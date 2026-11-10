@@ -77,6 +77,12 @@ from pocket_toolkit.algorithms.rle import (
     rle_encode_iter,
     rle_encode_str,
 )
+from pocket_toolkit.algorithms.sampling import (
+    fisher_yates_shuffle,
+    reservoir_sample,
+    shuffled,
+    weighted_reservoir_sample,
+)
 from pocket_toolkit.algorithms.sliding_window import (
     SlidingWindowAggregator,
     sliding_window_extrema,
@@ -151,6 +157,7 @@ __all__: list[str] = [
     "fast_power",
     "find_closest_matches",
     "find_shortest_path",
+    "fisher_yates_shuffle",
     "fnv1a_32",
     "fnv1a_32_hex",
     "fnv1a_64",
@@ -178,6 +185,7 @@ __all__: list[str] = [
     "mod_mul",
     "mod_sub",
     "modular_inverse",
+    "reservoir_sample",
     "rle_decode",
     "rle_decode_bytes",
     "rle_decode_iter",
@@ -186,8 +194,10 @@ __all__: list[str] = [
     "rle_encode_bytes",
     "rle_encode_iter",
     "rle_encode_str",
+    "shuffled",
     "sliding_window_extrema",
     "topological_sort",
     "topological_sort_dfs",
     "upper_bound",
+    "weighted_reservoir_sample",
 ]
