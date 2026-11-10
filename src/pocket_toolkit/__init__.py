@@ -94,6 +94,10 @@ from pocket_toolkit.algorithms.topological_sort import (
     topological_sort,
     topological_sort_dfs,
 )
+from pocket_toolkit.data.flatten import (
+    flatten_dict,
+    unflatten_dict,
+)
 from pocket_toolkit.decorators.circuit_breaker import (
     CircuitBreaker,
     CircuitBreakerOpenError,
@@ -235,6 +239,7 @@ __all__: list[str] = [
     "find_closest_matches",
     "find_shortest_path",
     "fisher_yates_shuffle",
+    "flatten_dict",
     "fnv1a_32",
     "fnv1a_32_hex",
     "fnv1a_64",
@@ -293,6 +298,7 @@ __all__: list[str] = [
     "topological_sort_dfs",
     "transliterate",
     "uncurry",
+    "unflatten_dict",
     "upper_bound",
     "validate_types",
     "weighted_reservoir_sample",
