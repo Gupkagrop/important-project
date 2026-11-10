@@ -99,6 +99,7 @@ from pocket_toolkit.decorators.circuit_breaker import (
     CircuitBreakerOpenError,
     CircuitState,
 )
+from pocket_toolkit.decorators.debounce import debounce
 from pocket_toolkit.decorators.leaky_bucket import (
     LeakyBucket,
     LeakyBucketOverflowError,
@@ -185,6 +186,7 @@ __all__: list[str] = [
     "crc32",
     "crc32_hex",
     "damerau_levenshtein_distance",
+    "debounce",
     "dijkstra",
     "equal_range",
     "extended_gcd",

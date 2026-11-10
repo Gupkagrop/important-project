@@ -5,6 +5,7 @@ from pocket_toolkit.decorators.circuit_breaker import (
     CircuitBreakerOpenError,
     CircuitState,
 )
+from pocket_toolkit.decorators.debounce import debounce
 from pocket_toolkit.decorators.leaky_bucket import (
     LeakyBucket,
     LeakyBucketOverflowError,
@@ -30,6 +31,7 @@ __all__: list[str] = [
     "CircuitBreaker",
     "CircuitBreakerOpenError",
     "CircuitState",
+    "debounce",
     "LeakyBucket",
     "LeakyBucketOverflowError",
     "RateLimitExceededError",
