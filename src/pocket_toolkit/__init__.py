@@ -94,6 +94,11 @@ from pocket_toolkit.algorithms.topological_sort import (
     topological_sort,
     topological_sort_dfs,
 )
+from pocket_toolkit.decorators.rate_limiter import (
+    RateLimitExceededError,
+    TokenBucket,
+    rate_limit,
+)
 from pocket_toolkit.decorators.retry import (
     RetryExhaustedError,
     calculate_backoff_delay,
@@ -138,11 +143,13 @@ __all__: list[str] = [
     "RLERun",
     "RadixNode",
     "RadixTree",
+    "RateLimitExceededError",
     "RetryExhaustedError",
     "RingBuffer",
     "ShortestPathResult",
     "SlidingWindowAggregator",
     "SparseMatrix",
+    "TokenBucket",
     "Trie",
     "TrieNode",
     "binary_search",
@@ -192,6 +199,7 @@ __all__: list[str] = [
     "mod_mul",
     "mod_sub",
     "modular_inverse",
+    "rate_limit",
     "reservoir_sample",
     "retry",
     "rle_decode",
