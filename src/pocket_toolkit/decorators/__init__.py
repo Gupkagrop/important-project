@@ -12,6 +12,10 @@ from pocket_toolkit.decorators.leaky_bucket import (
     LeakyBucketOverflowError,
     leaky_bucket_limit,
 )
+from pocket_toolkit.decorators.profiler import (
+    ProfileStats,
+    profile_time,
+)
 from pocket_toolkit.decorators.rate_limiter import (
     RateLimitExceededError,
     TokenBucket,
@@ -37,11 +41,13 @@ __all__: list[str] = [
     "lazy_property",
     "LeakyBucket",
     "LeakyBucketOverflowError",
+    "ProfileStats",
     "RateLimitExceededError",
     "RetryExhaustedError",
     "TokenBucket",
     "calculate_backoff_delay",
     "leaky_bucket_limit",
+    "profile_time",
     "rate_limit",
     "retry",
     "throttle",
