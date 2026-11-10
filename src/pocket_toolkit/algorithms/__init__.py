@@ -32,20 +32,30 @@ from pocket_toolkit.algorithms.rle import (
     rle_encode_iter,
     rle_encode_str,
 )
+from pocket_toolkit.algorithms.topological_sort import (
+    CyclicDependencyError,
+    calculate_in_degrees,
+    is_dag,
+    topological_sort,
+    topological_sort_dfs,
+)
 
 __all__: list[str] = [
     "AlignmentStep",
     "Comparable",
+    "CyclicDependencyError",
     "EditOperation",
     "RLERun",
     "binary_search",
     "binary_search_last",
     "binary_search_rotated",
     "calculate_compression_ratio",
+    "calculate_in_degrees",
     "calculate_space_saving",
     "damerau_levenshtein_distance",
     "equal_range",
     "find_closest_matches",
+    "is_dag",
     "levenshtein_alignment",
     "levenshtein_distance",
     "levenshtein_matrix",
@@ -59,5 +69,7 @@ __all__: list[str] = [
     "rle_encode_bytes",
     "rle_encode_iter",
     "rle_encode_str",
+    "topological_sort",
+    "topological_sort_dfs",
     "upper_bound",
 ]
