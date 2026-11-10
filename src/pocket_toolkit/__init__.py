@@ -99,6 +99,10 @@ from pocket_toolkit.decorators.circuit_breaker import (
     CircuitBreakerOpenError,
     CircuitState,
 )
+from pocket_toolkit.decorators.contracts import (
+    deprecated,
+    validate_types,
+)
 from pocket_toolkit.decorators.debounce import debounce
 from pocket_toolkit.decorators.lazy_property import lazy_property
 from pocket_toolkit.decorators.leaky_bucket import (
@@ -210,6 +214,7 @@ __all__: list[str] = [
     "curry",
     "damerau_levenshtein_distance",
     "debounce",
+    "deprecated",
     "dijkstra",
     "equal_range",
     "extended_gcd",
@@ -267,5 +272,6 @@ __all__: list[str] = [
     "topological_sort_dfs",
     "uncurry",
     "upper_bound",
+    "validate_types",
     "weighted_reservoir_sample",
 ]

@@ -5,6 +5,10 @@ from pocket_toolkit.decorators.circuit_breaker import (
     CircuitBreakerOpenError,
     CircuitState,
 )
+from pocket_toolkit.decorators.contracts import (
+    deprecated,
+    validate_types,
+)
 from pocket_toolkit.decorators.debounce import debounce
 from pocket_toolkit.decorators.lazy_property import lazy_property
 from pocket_toolkit.decorators.leaky_bucket import (
@@ -38,6 +42,7 @@ __all__: list[str] = [
     "CircuitBreakerOpenError",
     "CircuitState",
     "debounce",
+    "deprecated",
     "lazy_property",
     "LeakyBucket",
     "LeakyBucketOverflowError",
@@ -52,4 +57,5 @@ __all__: list[str] = [
     "retry",
     "throttle",
     "timed_cache",
+    "validate_types",
 ]

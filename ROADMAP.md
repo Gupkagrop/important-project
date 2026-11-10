@@ -48,7 +48,7 @@
 - [x] **День 33: Lazy Property Wrapper** — Дескриптор `@lazy_property` для отложенного вычисления атрибута объекта при первом обращении.
 - [x] **День 34: Function Currying** — Функция `curry` для преобразования функции нескольких аргументов в цепочку одноместных функций.
 - [x] **День 35: Execution Timer & Profiler** — Декоратор `@profile_time` для логирования и сбора статистики времени выполнения функций.
-- [ ] **День 36: Deprecation & Contract Validator** — Декораторы `@deprecated` с выводом предупреждений и `@validate_types` для проверки сигнатур.
+- [x] **День 36: Deprecation & Contract Validator** — Декораторы `@deprecated` с выводом предупреждений и `@validate_types` для проверки сигнатур.
 
 ---
 
