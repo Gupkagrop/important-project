@@ -14,6 +14,15 @@ from pocket_toolkit.algorithms.dijkstra import (
     dijkstra,
     find_shortest_path,
 )
+from pocket_toolkit.algorithms.hashing import (
+    crc32,
+    crc32_hex,
+    fnv1a_32,
+    fnv1a_32_hex,
+    fnv1a_64,
+    fnv1a_64_hex,
+    hash_stream_crc32,
+)
 from pocket_toolkit.algorithms.huffman import (
     HuffmanNode,
     HuffmanTree,
@@ -101,6 +110,8 @@ __all__: list[str] = [
     "chinese_remainder_theorem",
     "common_intersection",
     "compute_prefix_function",
+    "crc32",
+    "crc32_hex",
     "damerau_levenshtein_distance",
     "dijkstra",
     "equal_range",
@@ -108,6 +119,11 @@ __all__: list[str] = [
     "fast_power",
     "find_closest_matches",
     "find_shortest_path",
+    "fnv1a_32",
+    "fnv1a_32_hex",
+    "fnv1a_64",
+    "fnv1a_64_hex",
+    "hash_stream_crc32",
     "huffman_decode",
     "huffman_encode",
     "insert_interval",
