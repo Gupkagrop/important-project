@@ -115,6 +115,7 @@ from pocket_toolkit.decorators.retry import (
     calculate_backoff_delay,
     retry,
 )
+from pocket_toolkit.decorators.throttle import throttle
 from pocket_toolkit.decorators.timed_cache import (
     CacheInfo,
     timed_cache,
@@ -235,6 +236,7 @@ __all__: list[str] = [
     "rle_encode_str",
     "shuffled",
     "sliding_window_extrema",
+    "throttle",
     "timed_cache",
     "topological_sort",
     "topological_sort_dfs",
