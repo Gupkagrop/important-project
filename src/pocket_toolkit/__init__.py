@@ -100,6 +100,7 @@ from pocket_toolkit.decorators.circuit_breaker import (
     CircuitState,
 )
 from pocket_toolkit.decorators.debounce import debounce
+from pocket_toolkit.decorators.lazy_property import lazy_property
 from pocket_toolkit.decorators.leaky_bucket import (
     LeakyBucket,
     LeakyBucketOverflowError,
@@ -220,6 +221,7 @@ __all__: list[str] = [
     "kmp_search",
     "kmp_search_iter",
     "kmp_search_sequence",
+    "lazy_property",
     "leaky_bucket_limit",
     "levenshtein_alignment",
     "levenshtein_distance",
