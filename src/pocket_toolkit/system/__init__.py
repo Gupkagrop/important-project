@@ -21,6 +21,10 @@ from pocket_toolkit.system.glob_matcher import (
     glob_match,
     glob_to_regex,
 )
+from pocket_toolkit.system.logger import (
+    LogLevel,
+    StructuredLogger,
+)
 from pocket_toolkit.system.temp import (
     TempWorkspace,
     temp_dir,
@@ -33,7 +37,9 @@ __all__: list[str] = [
     "EnvConfig",
     "EnvParseError",
     "GlobPattern",
+    "LogLevel",
     "MemoryFileBuffer",
+    "StructuredLogger",
     "TempWorkspace",
     "atomic_open",
     "atomic_write",

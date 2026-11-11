@@ -271,6 +271,10 @@ from pocket_toolkit.system.glob_matcher import (
     glob_match,
     glob_to_regex,
 )
+from pocket_toolkit.system.logger import (
+    LogLevel,
+    StructuredLogger,
+)
 from pocket_toolkit.system.temp import (
     TempWorkspace,
     temp_dir,
@@ -312,6 +316,7 @@ __all__: list[str] = [
     "LeakyBucket",
     "LeakyBucketOverflowError",
     "LinkedList",
+    "LogLevel",
     "MathEvaluationError",
     "MathSecurityError",
     "MemoryFileBuffer",
@@ -333,6 +338,7 @@ __all__: list[str] = [
     "ShortestPathResult",
     "SlidingWindowAggregator",
     "SparseMatrix",
+    "StructuredLogger",
     "Table",
     "TableBorderStyle",
     "TempWorkspace",
