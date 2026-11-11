@@ -1,5 +1,9 @@
 """Пакет системных утилит и файловых операций Pocket Toolkit."""
 
+from pocket_toolkit.system.buffer import (
+    BufferOverflowError,
+    MemoryFileBuffer,
+)
 from pocket_toolkit.system.env import (
     EnvConfig,
     EnvParseError,
@@ -19,9 +23,11 @@ from pocket_toolkit.system.temp import (
 )
 
 __all__: list[str] = [
+    "BufferOverflowError",
     "EnvConfig",
     "EnvParseError",
     "GlobPattern",
+    "MemoryFileBuffer",
     "TempWorkspace",
     "glob_filter",
     "glob_match",

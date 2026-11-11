@@ -250,6 +250,10 @@ from pocket_toolkit.structures.radix_tree import RadixNode, RadixTree
 from pocket_toolkit.structures.ring_buffer import RingBuffer
 from pocket_toolkit.structures.sparse_matrix import SparseMatrix
 from pocket_toolkit.structures.trie import Trie, TrieNode
+from pocket_toolkit.system.buffer import (
+    BufferOverflowError,
+    MemoryFileBuffer,
+)
 from pocket_toolkit.system.env import (
     EnvConfig,
     EnvParseError,
@@ -277,6 +281,7 @@ __all__: list[str] = [
     "ArgumentParser",
     "BloomFilter",
     "BoundedDeque",
+    "BufferOverflowError",
     "CSVParseError",
     "CacheInfo",
     "CircuitBreaker",
@@ -303,6 +308,7 @@ __all__: list[str] = [
     "LinkedList",
     "MathEvaluationError",
     "MathSecurityError",
+    "MemoryFileBuffer",
     "Namespace",
     "Node",
     "Pipeline",
