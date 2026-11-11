@@ -6,10 +6,20 @@ from pocket_toolkit.system.env import (
     load_env,
     parse_env,
 )
+from pocket_toolkit.system.glob_matcher import (
+    GlobPattern,
+    glob_filter,
+    glob_match,
+    glob_to_regex,
+)
 
 __all__: list[str] = [
     "EnvConfig",
     "EnvParseError",
+    "GlobPattern",
+    "glob_filter",
+    "glob_match",
+    "glob_to_regex",
     "load_env",
     "parse_env",
 ]

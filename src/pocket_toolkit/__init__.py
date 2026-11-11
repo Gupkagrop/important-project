@@ -256,6 +256,12 @@ from pocket_toolkit.system.env import (
     load_env,
     parse_env,
 )
+from pocket_toolkit.system.glob_matcher import (
+    GlobPattern,
+    glob_filter,
+    glob_match,
+    glob_to_regex,
+)
 
 __all__: list[str] = [
     "DELETE_FIELD",
@@ -281,6 +287,7 @@ __all__: list[str] = [
     "EditOperation",
     "EnvConfig",
     "EnvParseError",
+    "GlobPattern",
     "HuffmanNode",
     "HuffmanTree",
     "Interval",
@@ -365,6 +372,9 @@ __all__: list[str] = [
     "generate_csv_from_dicts",
     "generate_csv_line",
     "generate_csv_stream",
+    "glob_filter",
+    "glob_match",
+    "glob_to_regex",
     "green",
     "hash_stream_crc32",
     "huffman_decode",
