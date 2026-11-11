@@ -1,5 +1,10 @@
 """Пакет манипуляции структурами данных и словарями Pocket Toolkit."""
 
+from pocket_toolkit.data.diff import (
+    DictDiff,
+    diff_dict,
+    find_dict_delta,
+)
 from pocket_toolkit.data.flatten import (
     flatten_dict,
     unflatten_dict,
@@ -12,8 +17,11 @@ from pocket_toolkit.data.merge import (
 
 __all__: list[str] = [
     "DELETE_FIELD",
+    "DictDiff",
     "deep_merge",
     "deep_patch",
+    "diff_dict",
+    "find_dict_delta",
     "flatten_dict",
     "unflatten_dict",
 ]

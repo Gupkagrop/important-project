@@ -94,6 +94,11 @@ from pocket_toolkit.algorithms.topological_sort import (
     topological_sort,
     topological_sort_dfs,
 )
+from pocket_toolkit.data.diff import (
+    DictDiff,
+    diff_dict,
+    find_dict_delta,
+)
 from pocket_toolkit.data.flatten import (
     flatten_dict,
     unflatten_dict,
@@ -191,6 +196,7 @@ __all__: list[str] = [
     "Comparable",
     "Curried",
     "CyclicDependencyError",
+    "DictDiff",
     "DisjointSet",
     "DoublyLinkedList",
     "DoublyNode",
@@ -240,11 +246,13 @@ __all__: list[str] = [
     "deep_merge",
     "deep_patch",
     "deprecated",
+    "diff_dict",
     "dijkstra",
     "equal_range",
     "extended_gcd",
     "fast_power",
     "find_closest_matches",
+    "find_dict_delta",
     "find_shortest_path",
     "fisher_yates_shuffle",
     "flatten_dict",
