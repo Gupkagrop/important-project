@@ -187,6 +187,12 @@ from pocket_toolkit.strings.slugify import (
     slugify,
     transliterate,
 )
+from pocket_toolkit.strings.template import (
+    Template,
+    TemplateError,
+    TemplateSyntaxError,
+    render_template,
+)
 from pocket_toolkit.structures.bloom_filter import BloomFilter
 from pocket_toolkit.structures.bounded_deque import BoundedDeque
 from pocket_toolkit.structures.disjoint_set import DisjointSet
@@ -248,6 +254,9 @@ __all__: list[str] = [
     "ShortestPathResult",
     "SlidingWindowAggregator",
     "SparseMatrix",
+    "Template",
+    "TemplateError",
+    "TemplateSyntaxError",
     "TokenBucket",
     "Trie",
     "TrieNode",
@@ -320,6 +329,7 @@ __all__: list[str] = [
     "pipe",
     "profile_time",
     "rate_limit",
+    "render_template",
     "reservoir_sample",
     "retry",
     "rle_decode",

@@ -27,16 +27,26 @@ from pocket_toolkit.strings.slugify import (
     slugify,
     transliterate,
 )
+from pocket_toolkit.strings.template import (
+    Template,
+    TemplateError,
+    TemplateSyntaxError,
+    render_template,
+)
 
 __all__: list[str] = [
     "IEC_UNITS",
     "SI_UNITS",
     "SemanticVersion",
+    "Template",
+    "TemplateError",
+    "TemplateSyntaxError",
     "format_bytes",
     "format_duration",
     "is_valid_semver",
     "parse_bytes",
     "parse_duration",
+    "render_template",
     "slugify",
     "split_words",
     "to_camel_case",
