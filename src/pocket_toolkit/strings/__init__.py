@@ -1,5 +1,11 @@
 """Пакет строковых утилит и текстовых трансформаций Pocket Toolkit."""
 
+from pocket_toolkit.strings.bytes import (
+    IEC_UNITS,
+    SI_UNITS,
+    format_bytes,
+    parse_bytes,
+)
 from pocket_toolkit.strings.case import (
     split_words,
     to_camel_case,
@@ -15,6 +21,10 @@ from pocket_toolkit.strings.slugify import (
 )
 
 __all__: list[str] = [
+    "IEC_UNITS",
+    "SI_UNITS",
+    "format_bytes",
+    "parse_bytes",
     "slugify",
     "split_words",
     "to_camel_case",

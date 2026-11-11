@@ -154,6 +154,12 @@ from pocket_toolkit.functional.curry import (
     curry,
     uncurry,
 )
+from pocket_toolkit.strings.bytes import (
+    IEC_UNITS,
+    SI_UNITS,
+    format_bytes,
+    parse_bytes,
+)
 from pocket_toolkit.strings.case import (
     split_words,
     to_camel_case,
@@ -186,6 +192,8 @@ from pocket_toolkit.structures.trie import Trie, TrieNode
 
 __all__: list[str] = [
     "DELETE_FIELD",
+    "IEC_UNITS",
+    "SI_UNITS",
     "AlignmentStep",
     "BloomFilter",
     "BoundedDeque",
@@ -260,6 +268,7 @@ __all__: list[str] = [
     "fnv1a_32_hex",
     "fnv1a_64",
     "fnv1a_64_hex",
+    "format_bytes",
     "hash_stream_crc32",
     "huffman_decode",
     "huffman_encode",
@@ -285,6 +294,7 @@ __all__: list[str] = [
     "mod_mul",
     "mod_sub",
     "modular_inverse",
+    "parse_bytes",
     "pipe",
     "profile_time",
     "rate_limit",
