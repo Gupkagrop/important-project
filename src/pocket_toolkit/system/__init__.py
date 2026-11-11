@@ -1,5 +1,10 @@
 """Пакет системных утилит и файловых операций Pocket Toolkit."""
 
+from pocket_toolkit.system.atomic import (
+    AtomicFileWriter,
+    atomic_open,
+    atomic_write,
+)
 from pocket_toolkit.system.buffer import (
     BufferOverflowError,
     MemoryFileBuffer,
@@ -23,12 +28,15 @@ from pocket_toolkit.system.temp import (
 )
 
 __all__: list[str] = [
+    "AtomicFileWriter",
     "BufferOverflowError",
     "EnvConfig",
     "EnvParseError",
     "GlobPattern",
     "MemoryFileBuffer",
     "TempWorkspace",
+    "atomic_open",
+    "atomic_write",
     "glob_filter",
     "glob_match",
     "glob_to_regex",

@@ -250,6 +250,11 @@ from pocket_toolkit.structures.radix_tree import RadixNode, RadixTree
 from pocket_toolkit.structures.ring_buffer import RingBuffer
 from pocket_toolkit.structures.sparse_matrix import SparseMatrix
 from pocket_toolkit.structures.trie import Trie, TrieNode
+from pocket_toolkit.system.atomic import (
+    AtomicFileWriter,
+    atomic_open,
+    atomic_write,
+)
 from pocket_toolkit.system.buffer import (
     BufferOverflowError,
     MemoryFileBuffer,
@@ -279,6 +284,7 @@ __all__: list[str] = [
     "AlignmentStep",
     "ArgumentError",
     "ArgumentParser",
+    "AtomicFileWriter",
     "BloomFilter",
     "BoundedDeque",
     "BufferOverflowError",
@@ -338,6 +344,8 @@ __all__: list[str] = [
     "TrieNode",
     "UndefinedSymbolError",
     "are_colors_enabled",
+    "atomic_open",
+    "atomic_write",
     "binary_search",
     "binary_search_last",
     "binary_search_rotated",
