@@ -14,6 +14,10 @@ from pocket_toolkit.cli.colors import (
     underline,
     yellow,
 )
+from pocket_toolkit.cli.progress import (
+    ProgressBar,
+    track_progress,
+)
 from pocket_toolkit.cli.table import (
     Table,
     TableBorderStyle,
@@ -21,6 +25,7 @@ from pocket_toolkit.cli.table import (
 )
 
 __all__: list[str] = [
+    "ProgressBar",
     "Table",
     "TableBorderStyle",
     "are_colors_enabled",
@@ -34,6 +39,7 @@ __all__: list[str] = [
     "red",
     "set_colors_enabled",
     "strip_ansi",
+    "track_progress",
     "underline",
     "yellow",
 ]

@@ -108,6 +108,10 @@ from pocket_toolkit.cli.colors import (
     underline,
     yellow,
 )
+from pocket_toolkit.cli.progress import (
+    ProgressBar,
+    track_progress,
+)
 from pocket_toolkit.cli.table import (
     Table,
     TableBorderStyle,
@@ -277,6 +281,7 @@ __all__: list[str] = [
     "PriorityItem",
     "PriorityQueue",
     "ProfileStats",
+    "ProgressBar",
     "QueryParams",
     "RLERun",
     "RadixNode",
@@ -408,6 +413,7 @@ __all__: list[str] = [
     "to_title_case",
     "topological_sort",
     "topological_sort_dfs",
+    "track_progress",
     "transliterate",
     "uncurry",
     "underline",
