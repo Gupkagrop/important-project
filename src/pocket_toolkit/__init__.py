@@ -169,6 +169,10 @@ from pocket_toolkit.strings.case import (
     to_snake_case,
     to_title_case,
 )
+from pocket_toolkit.strings.duration import (
+    format_duration,
+    parse_duration,
+)
 from pocket_toolkit.strings.slugify import (
     slugify,
     transliterate,
@@ -269,6 +273,7 @@ __all__: list[str] = [
     "fnv1a_64",
     "fnv1a_64_hex",
     "format_bytes",
+    "format_duration",
     "hash_stream_crc32",
     "huffman_decode",
     "huffman_encode",
@@ -295,6 +300,7 @@ __all__: list[str] = [
     "mod_sub",
     "modular_inverse",
     "parse_bytes",
+    "parse_duration",
     "pipe",
     "profile_time",
     "rate_limit",

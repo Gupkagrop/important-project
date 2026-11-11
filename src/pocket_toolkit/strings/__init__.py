@@ -15,6 +15,10 @@ from pocket_toolkit.strings.case import (
     to_snake_case,
     to_title_case,
 )
+from pocket_toolkit.strings.duration import (
+    format_duration,
+    parse_duration,
+)
 from pocket_toolkit.strings.slugify import (
     slugify,
     transliterate,
@@ -24,7 +28,9 @@ __all__: list[str] = [
     "IEC_UNITS",
     "SI_UNITS",
     "format_bytes",
+    "format_duration",
     "parse_bytes",
+    "parse_duration",
     "slugify",
     "split_words",
     "to_camel_case",
