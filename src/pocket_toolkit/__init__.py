@@ -94,6 +94,14 @@ from pocket_toolkit.algorithms.topological_sort import (
     topological_sort,
     topological_sort_dfs,
 )
+from pocket_toolkit.data.csv_stream import (
+    CSVParseError,
+    generate_csv_from_dicts,
+    generate_csv_line,
+    generate_csv_stream,
+    parse_csv_dicts,
+    parse_csv_stream,
+)
 from pocket_toolkit.data.diff import (
     DictDiff,
     diff_dict,
@@ -222,6 +230,7 @@ __all__: list[str] = [
     "AlignmentStep",
     "BloomFilter",
     "BoundedDeque",
+    "CSVParseError",
     "CacheInfo",
     "CircuitBreaker",
     "CircuitBreakerOpenError",
@@ -305,6 +314,9 @@ __all__: list[str] = [
     "fnv1a_64_hex",
     "format_bytes",
     "format_duration",
+    "generate_csv_from_dicts",
+    "generate_csv_line",
+    "generate_csv_stream",
     "hash_stream_crc32",
     "huffman_decode",
     "huffman_encode",
@@ -332,6 +344,8 @@ __all__: list[str] = [
     "mod_sub",
     "modular_inverse",
     "parse_bytes",
+    "parse_csv_dicts",
+    "parse_csv_stream",
     "parse_duration",
     "parse_query",
     "pipe",
