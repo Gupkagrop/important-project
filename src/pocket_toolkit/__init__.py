@@ -259,6 +259,13 @@ from pocket_toolkit.system.buffer import (
     BufferOverflowError,
     MemoryFileBuffer,
 )
+from pocket_toolkit.system.diagnostics import (
+    DiagnosticCollector,
+    DiagnosticReport,
+    EnvironmentInfo,
+    ProcessMetrics,
+    collect_diagnostics,
+)
 from pocket_toolkit.system.env import (
     EnvConfig,
     EnvParseError,
@@ -304,6 +311,8 @@ __all__: list[str] = [
     "Comparable",
     "Curried",
     "CyclicDependencyError",
+    "DiagnosticCollector",
+    "DiagnosticReport",
     "DictDiff",
     "DisjointSet",
     "DoublyLinkedList",
@@ -311,6 +320,7 @@ __all__: list[str] = [
     "EditOperation",
     "EnvConfig",
     "EnvParseError",
+    "EnvironmentInfo",
     "EventBus",
     "EventHandler",
     "GlobPattern",
@@ -331,6 +341,7 @@ __all__: list[str] = [
     "Pipeline",
     "PriorityItem",
     "PriorityQueue",
+    "ProcessMetrics",
     "ProfileStats",
     "ProgressBar",
     "QueryParams",
@@ -369,6 +380,7 @@ __all__: list[str] = [
     "calculate_in_degrees",
     "calculate_space_saving",
     "chinese_remainder_theorem",
+    "collect_diagnostics",
     "colorize",
     "common_intersection",
     "compose",

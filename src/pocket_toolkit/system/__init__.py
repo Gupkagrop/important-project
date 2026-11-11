@@ -9,6 +9,13 @@ from pocket_toolkit.system.buffer import (
     BufferOverflowError,
     MemoryFileBuffer,
 )
+from pocket_toolkit.system.diagnostics import (
+    DiagnosticCollector,
+    DiagnosticReport,
+    EnvironmentInfo,
+    ProcessMetrics,
+    collect_diagnostics,
+)
 from pocket_toolkit.system.env import (
     EnvConfig,
     EnvParseError,
@@ -38,17 +45,22 @@ from pocket_toolkit.system.temp import (
 __all__: list[str] = [
     "AtomicFileWriter",
     "BufferOverflowError",
+    "DiagnosticCollector",
+    "DiagnosticReport",
     "EnvConfig",
     "EnvParseError",
+    "EnvironmentInfo",
     "EventBus",
     "EventHandler",
     "GlobPattern",
     "LogLevel",
     "MemoryFileBuffer",
+    "ProcessMetrics",
     "StructuredLogger",
     "TempWorkspace",
     "atomic_open",
     "atomic_write",
+    "collect_diagnostics",
     "glob_filter",
     "glob_match",
     "glob_to_regex",
