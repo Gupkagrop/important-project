@@ -14,13 +14,21 @@ from pocket_toolkit.cli.colors import (
     underline,
     yellow,
 )
+from pocket_toolkit.cli.table import (
+    Table,
+    TableBorderStyle,
+    format_table,
+)
 
 __all__: list[str] = [
+    "Table",
+    "TableBorderStyle",
     "are_colors_enabled",
     "blue",
     "bold",
     "colorize",
     "cyan",
+    "format_table",
     "green",
     "magenta",
     "red",

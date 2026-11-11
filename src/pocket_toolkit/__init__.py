@@ -108,6 +108,11 @@ from pocket_toolkit.cli.colors import (
     underline,
     yellow,
 )
+from pocket_toolkit.cli.table import (
+    Table,
+    TableBorderStyle,
+    format_table,
+)
 from pocket_toolkit.data.csv_stream import (
     CSVParseError,
     generate_csv_from_dicts,
@@ -283,6 +288,8 @@ __all__: list[str] = [
     "ShortestPathResult",
     "SlidingWindowAggregator",
     "SparseMatrix",
+    "Table",
+    "TableBorderStyle",
     "Template",
     "TemplateError",
     "TemplateSyntaxError",
@@ -333,6 +340,7 @@ __all__: list[str] = [
     "fnv1a_64_hex",
     "format_bytes",
     "format_duration",
+    "format_table",
     "generate_csv_from_dicts",
     "generate_csv_line",
     "generate_csv_stream",
