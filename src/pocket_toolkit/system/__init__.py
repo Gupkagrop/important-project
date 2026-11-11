@@ -15,6 +15,10 @@ from pocket_toolkit.system.env import (
     load_env,
     parse_env,
 )
+from pocket_toolkit.system.event_bus import (
+    EventBus,
+    EventHandler,
+)
 from pocket_toolkit.system.glob_matcher import (
     GlobPattern,
     glob_filter,
@@ -36,6 +40,8 @@ __all__: list[str] = [
     "BufferOverflowError",
     "EnvConfig",
     "EnvParseError",
+    "EventBus",
+    "EventHandler",
     "GlobPattern",
     "LogLevel",
     "MemoryFileBuffer",
