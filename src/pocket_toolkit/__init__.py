@@ -179,6 +179,10 @@ from pocket_toolkit.strings.duration import (
     format_duration,
     parse_duration,
 )
+from pocket_toolkit.strings.semver import (
+    SemanticVersion,
+    is_valid_semver,
+)
 from pocket_toolkit.strings.slugify import (
     slugify,
     transliterate,
@@ -240,6 +244,7 @@ __all__: list[str] = [
     "RateLimitExceededError",
     "RetryExhaustedError",
     "RingBuffer",
+    "SemanticVersion",
     "ShortestPathResult",
     "SlidingWindowAggregator",
     "SparseMatrix",
@@ -291,6 +296,7 @@ __all__: list[str] = [
     "intersect_interval_lists",
     "is_coprime",
     "is_dag",
+    "is_valid_semver",
     "kmp_count",
     "kmp_find_first",
     "kmp_search",

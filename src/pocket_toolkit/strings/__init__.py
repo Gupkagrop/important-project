@@ -19,6 +19,10 @@ from pocket_toolkit.strings.duration import (
     format_duration,
     parse_duration,
 )
+from pocket_toolkit.strings.semver import (
+    SemanticVersion,
+    is_valid_semver,
+)
 from pocket_toolkit.strings.slugify import (
     slugify,
     transliterate,
@@ -27,8 +31,10 @@ from pocket_toolkit.strings.slugify import (
 __all__: list[str] = [
     "IEC_UNITS",
     "SI_UNITS",
+    "SemanticVersion",
     "format_bytes",
     "format_duration",
+    "is_valid_semver",
     "parse_bytes",
     "parse_duration",
     "slugify",
