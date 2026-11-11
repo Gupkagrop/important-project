@@ -103,6 +103,12 @@ from pocket_toolkit.data.flatten import (
     flatten_dict,
     unflatten_dict,
 )
+from pocket_toolkit.data.math_eval import (
+    MathEvaluationError,
+    MathSecurityError,
+    UndefinedSymbolError,
+    evaluate_math,
+)
 from pocket_toolkit.data.merge import (
     DELETE_FIELD,
     deep_merge,
@@ -221,6 +227,8 @@ __all__: list[str] = [
     "LeakyBucket",
     "LeakyBucketOverflowError",
     "LinkedList",
+    "MathEvaluationError",
+    "MathSecurityError",
     "Node",
     "Pipeline",
     "PriorityItem",
@@ -238,6 +246,7 @@ __all__: list[str] = [
     "TokenBucket",
     "Trie",
     "TrieNode",
+    "UndefinedSymbolError",
     "binary_search",
     "binary_search_last",
     "binary_search_rotated",
@@ -261,6 +270,7 @@ __all__: list[str] = [
     "diff_dict",
     "dijkstra",
     "equal_range",
+    "evaluate_math",
     "extended_gcd",
     "fast_power",
     "find_closest_matches",
