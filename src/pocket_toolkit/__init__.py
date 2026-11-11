@@ -94,6 +94,11 @@ from pocket_toolkit.algorithms.topological_sort import (
     topological_sort,
     topological_sort_dfs,
 )
+from pocket_toolkit.cli.arg_parser import (
+    ArgumentError,
+    ArgumentParser,
+    Namespace,
+)
 from pocket_toolkit.cli.colors import (
     are_colors_enabled,
     blue,
@@ -251,6 +256,8 @@ __all__: list[str] = [
     "IEC_UNITS",
     "SI_UNITS",
     "AlignmentStep",
+    "ArgumentError",
+    "ArgumentParser",
     "BloomFilter",
     "BoundedDeque",
     "CSVParseError",
@@ -276,6 +283,7 @@ __all__: list[str] = [
     "LinkedList",
     "MathEvaluationError",
     "MathSecurityError",
+    "Namespace",
     "Node",
     "Pipeline",
     "PriorityItem",

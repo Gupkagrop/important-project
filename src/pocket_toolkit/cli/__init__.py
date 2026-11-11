@@ -1,5 +1,10 @@
 """Пакет консольных и терминальных утилит Pocket Toolkit."""
 
+from pocket_toolkit.cli.arg_parser import (
+    ArgumentError,
+    ArgumentParser,
+    Namespace,
+)
 from pocket_toolkit.cli.colors import (
     are_colors_enabled,
     blue,
@@ -25,6 +30,9 @@ from pocket_toolkit.cli.table import (
 )
 
 __all__: list[str] = [
+    "ArgumentError",
+    "ArgumentParser",
+    "Namespace",
     "ProgressBar",
     "Table",
     "TableBorderStyle",
