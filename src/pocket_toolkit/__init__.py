@@ -179,6 +179,11 @@ from pocket_toolkit.strings.duration import (
     format_duration,
     parse_duration,
 )
+from pocket_toolkit.strings.query_string import (
+    QueryParams,
+    build_query,
+    parse_query,
+)
 from pocket_toolkit.strings.semver import (
     SemanticVersion,
     is_valid_semver,
@@ -244,6 +249,7 @@ __all__: list[str] = [
     "PriorityItem",
     "PriorityQueue",
     "ProfileStats",
+    "QueryParams",
     "RLERun",
     "RadixNode",
     "RadixTree",
@@ -264,6 +270,7 @@ __all__: list[str] = [
     "binary_search",
     "binary_search_last",
     "binary_search_rotated",
+    "build_query",
     "calculate_backoff_delay",
     "calculate_compression_ratio",
     "calculate_in_degrees",
@@ -326,6 +333,7 @@ __all__: list[str] = [
     "modular_inverse",
     "parse_bytes",
     "parse_duration",
+    "parse_query",
     "pipe",
     "profile_time",
     "rate_limit",
